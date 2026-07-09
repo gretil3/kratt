@@ -216,3 +216,9 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# ---- Kratt-specific ----
+
+# Scraped data (contains real comment text, don't commit)
+backend/scripts/videos_to_scrape.csv
+backend/scripts/raw_comments.csv
