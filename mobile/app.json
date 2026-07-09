@@ -1,0 +1,23 @@
+{
+  "expo": {
+    "name": "Kratt",
+    "slug": "kratt-mobile",
+    "scheme": "kratt",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "newArchEnabled": false,
+    "splash": {
+      "backgroundColor": "#0B0F1A"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {},
+    "web": {
+      "bundler": "metro"
+    },
+    "plugins": ["expo-router"]
+  }
+}
