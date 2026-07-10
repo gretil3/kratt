@@ -6,7 +6,11 @@ import {
   useWindowDimensions,
   View,
 } from "react-native";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import {
+  useLocalSearchParams,
+  useRootNavigationState,
+  useRouter,
+} from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useAnalysis } from "../../context/AnalysisContext";
 import AppButton from "../../components/ui/AppButton";
@@ -32,6 +36,9 @@ export default function AnalysisScreen() {
   const { videoId } = useLocalSearchParams();
   const { videoUrl, setVideoUrl, result, reset } = useAnalysis();
   const { width } = useWindowDimensions();
+  // On a cold deep link this screen mounts before the root navigator is
+  // ready; navigating then throws. Wait for the root state key.
+  const navigationReady = Boolean(useRootNavigationState()?.key);
 
   // The API is POST-only (no per-id GET), so a result only exists in memory.
   // It has to belong to THIS id — otherwise (deep link, web refresh, stale
@@ -43,14 +50,14 @@ export default function AnalysisScreen() {
     parseVideoId(videoUrl) === videoId;
 
   useEffect(() => {
-    if (hasMatchingResult) return;
+    if (hasMatchingResult || !navigationReady) return;
     if (typeof videoId === "string" && videoId.length > 0) {
       setVideoUrl(canonicalUrl(videoId));
       router.replace("/analyzing");
     } else {
       router.replace("/home");
     }
-  }, [hasMatchingResult, videoId, setVideoUrl, router]);
+  }, [hasMatchingResult, navigationReady, videoId, setVideoUrl, router]);
 
   if (!hasMatchingResult) {
     return null;
@@ -74,7 +81,7 @@ export default function AnalysisScreen() {
     <ScrollView style={styles.screen} contentContainerStyle={styles.scroll}>
       <StatusBar style="dark" />
       <View style={styles.content}>
-        <Text style={type.monoLabel}>HASIL ANALISIS</Text>
+        <Text style={type.monoLabel}>ANALYSIS RESULT</Text>
         {/* The contract has no videoTitle, so the canonical URL is the header. */}
         <Text style={styles.sourceUrl}>{canonicalUrl(videoId)}</Text>
 
@@ -83,13 +90,13 @@ export default function AnalysisScreen() {
         <View style={styles.gaugeBlock}>
           <ScoreGauge value={bot_percentage} />
           <Text style={styles.gaugeFootnote}>
-            Berdasarkan {total_comments_analyzed.toLocaleString("id-ID")}{" "}
-            komentar yang dianalisis
+            Based on {total_comments_analyzed.toLocaleString("en-US")} comments
+            analyzed
           </Text>
         </View>
 
         <Text style={[type.monoLabel, styles.sectionLabel]}>
-          KATEGORI BUKTI
+          EVIDENCE CATEGORIES
         </Text>
         <View style={styles.grid}>
           {CATEGORIES.map((category) => {
@@ -114,7 +121,7 @@ export default function AnalysisScreen() {
         {sample_flagged_comments.length > 0 ? (
           <>
             <Text style={[type.monoLabel, styles.sectionLabel]}>
-              CONTOH KOMENTAR TERDETEKSI
+              FLAGGED COMMENT EXAMPLES
             </Text>
             <View style={styles.flaggedList}>
               {sample_flagged_comments.map((comment, index) => (
@@ -130,12 +137,12 @@ export default function AnalysisScreen() {
         ) : null}
 
         <Text style={styles.footnote}>
-          Skor ini titik awal untuk berpikir kritis, bukan vonis akhir — baca
-          contohnya dan simpulkan sendiri.
+          This score is a starting point for critical thinking, not a final
+          verdict — read the examples and judge for yourself.
         </Text>
 
         <AppButton
-          label="Analisis video lain"
+          label="Analyze another video"
           onPress={handleAnalyzeAnother}
           style={styles.button}
         />
