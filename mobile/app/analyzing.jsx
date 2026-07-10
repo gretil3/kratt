@@ -3,6 +3,7 @@ import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useAnalysis } from "../context/AnalysisContext";
+import { parseVideoId } from "../lib/youtube";
 
 const STATUS_MESSAGES = [
   "Pulling comments",
@@ -29,7 +30,12 @@ export default function AnalyzingScreen() {
     hasStarted.current = true;
 
     runAnalysis(videoUrl).then((outcome) => {
-      router.replace(outcome.ok ? "/results" : "/error");
+      if (!outcome.ok) {
+        router.replace("/error");
+        return;
+      }
+      const videoId = parseVideoId(videoUrl);
+      router.replace(videoId ? `/analysis/${videoId}` : "/home");
     });
   }, [videoUrl, runAnalysis, router]);
 
