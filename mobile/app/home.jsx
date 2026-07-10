@@ -2,7 +2,6 @@ import { useState } from "react";
 import {
   KeyboardAvoidingView,
   Platform,
-  Pressable,
   StyleSheet,
   Text,
   TextInput,
@@ -11,6 +10,8 @@ import {
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useAnalysis } from "../context/AnalysisContext";
+import AppButton from "../components/ui/AppButton";
+import { color, font, hairline, radius, type } from "../theme/tokens";
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -30,17 +31,23 @@ export default function HomeScreen() {
       style={styles.container}
       behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
-      <StatusBar style="light" />
+      <StatusBar style="dark" />
       <View style={styles.content}>
-        <Text style={styles.heading}>Paste a YouTube link</Text>
+        <View style={styles.brandRow}>
+          <View style={styles.brandMark} />
+          <Text style={styles.brand}>Kratt</Text>
+        </View>
+
+        <Text style={styles.heading}>Tempel link video YouTube</Text>
         <Text style={styles.subheading}>
-          Kratt reads the comment section and flags likely bot activity.
+          Kratt membaca kolom komentarnya dan menandai kemungkinan aktivitas
+          bot.
         </Text>
 
         <TextInput
           style={styles.input}
           placeholder="https://youtube.com/watch?v=..."
-          placeholderTextColor="#5C6478"
+          placeholderTextColor="rgba(28, 27, 24, 0.35)"
           autoCapitalize="none"
           autoCorrect={false}
           keyboardType="url"
@@ -48,18 +55,16 @@ export default function HomeScreen() {
           onChangeText={setVideoUrl}
         />
         {touched && isEmpty ? (
-          <Text style={styles.errorHint}>Paste a link before analyzing.</Text>
+          <Text style={styles.errorHint}>
+            Tempel link dulu sebelum menganalisis.
+          </Text>
         ) : null}
 
-        <Pressable
-          style={({ pressed }) => [
-            styles.button,
-            pressed && styles.buttonPressed,
-          ]}
+        <AppButton
+          label="Analisis"
           onPress={handleAnalyze}
-        >
-          <Text style={styles.buttonText}>Analyze</Text>
-        </Pressable>
+          style={styles.button}
+        />
       </View>
     </KeyboardAvoidingView>
   );
@@ -68,51 +73,58 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#0B0F1A",
+    backgroundColor: color.bg,
   },
   content: {
     flex: 1,
     justifyContent: "center",
     paddingHorizontal: 24,
     gap: 12,
+    width: "100%",
+    maxWidth: 560,
+    alignSelf: "center",
+  },
+  brandRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    marginBottom: 12,
+  },
+  brandMark: {
+    width: 8,
+    height: 8,
+    backgroundColor: color.straw,
+  },
+  brand: {
+    fontFamily: font.slab,
+    fontSize: 18,
+    color: color.ink,
   },
   heading: {
-    fontSize: 24,
-    fontWeight: "700",
-    color: "#FFFFFF",
+    ...type.h2,
   },
   subheading: {
-    fontSize: 14,
-    color: "#8A93A6",
+    ...type.body,
+    color: color.inkMuted,
     marginBottom: 12,
   },
   input: {
-    backgroundColor: "#151B2C",
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: "#262E45",
+    backgroundColor: color.surface,
+    borderRadius: radius.md,
+    borderWidth: hairline,
+    borderColor: color.hairline,
     paddingHorizontal: 16,
     paddingVertical: 14,
-    fontSize: 15,
-    color: "#FFFFFF",
+    fontFamily: font.mono,
+    fontSize: 14,
+    color: color.ink,
   },
   errorHint: {
-    color: "#F87171",
-    fontSize: 13,
+    ...type.small,
+    color: color.rustInk,
   },
   button: {
     marginTop: 12,
-    backgroundColor: "#5B6CFF",
-    borderRadius: 12,
-    paddingVertical: 16,
-    alignItems: "center",
-  },
-  buttonPressed: {
-    opacity: 0.85,
-  },
-  buttonText: {
-    color: "#FFFFFF",
-    fontSize: 16,
-    fontWeight: "700",
+    alignSelf: "stretch",
   },
 });

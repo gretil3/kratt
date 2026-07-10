@@ -4,11 +4,12 @@ import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useAnalysis } from "../context/AnalysisContext";
 import { parseVideoId } from "../lib/youtube";
+import { color, type } from "../theme/tokens";
 
 const STATUS_MESSAGES = [
-  "Pulling comments",
-  "Reading patterns",
-  "Finishing the count",
+  "Mengambil komentar",
+  "Membaca pola",
+  "Menghitung skor",
 ];
 const STATUS_INTERVAL_MS = 1100;
 
@@ -41,8 +42,8 @@ export default function AnalyzingScreen() {
 
   return (
     <View style={styles.container}>
-      <StatusBar style="light" />
-      <ActivityIndicator size="large" color="#5B6CFF" />
+      <StatusBar style="dark" />
+      <ActivityIndicator size="large" color={color.moss} />
       <Text style={styles.status}>{STATUS_MESSAGES[statusIndex]}…</Text>
     </View>
   );
@@ -51,13 +52,13 @@ export default function AnalyzingScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#0B0F1A",
+    backgroundColor: color.bg,
     alignItems: "center",
     justifyContent: "center",
     gap: 16,
   },
   status: {
-    fontSize: 16,
-    color: "#C7CCDA",
+    ...type.body,
+    color: color.inkMuted,
   },
 });

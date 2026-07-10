@@ -3,6 +3,7 @@ import { Platform, StyleSheet, Text, View } from "react-native";
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import LandingScreen from "../components/landing/LandingScreen";
+import { color, font, type } from "../theme/tokens";
 
 const SPLASH_DURATION_MS = 1500;
 
@@ -20,9 +21,12 @@ function NativeSplash() {
 
   return (
     <View style={styles.container}>
-      <StatusBar style="light" />
-      <Text style={styles.title}>Kratt</Text>
-      <Text style={styles.tagline}>Sniffing out bots in your comments.</Text>
+      <StatusBar style="dark" />
+      <View style={styles.brandRow}>
+        <View style={styles.brandMark} />
+        <Text style={styles.title}>Kratt</Text>
+      </View>
+      <Text style={styles.tagline}>Mengendus bot di kolom komentar.</Text>
     </View>
   );
 }
@@ -37,19 +41,27 @@ export default function Index() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#0B0F1A",
+    backgroundColor: color.bg,
     alignItems: "center",
     justifyContent: "center",
     gap: 8,
   },
+  brandRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+  },
+  brandMark: {
+    width: 12,
+    height: 12,
+    backgroundColor: color.straw,
+  },
   title: {
+    fontFamily: font.slab,
     fontSize: 42,
-    fontWeight: "800",
-    color: "#FFFFFF",
-    letterSpacing: 1,
+    color: color.ink,
   },
   tagline: {
-    fontSize: 14,
-    color: "#8A93A6",
+    ...type.small,
   },
 });
