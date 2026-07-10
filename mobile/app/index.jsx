@@ -1,11 +1,14 @@
 import { useEffect } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Platform, StyleSheet, Text, View } from "react-native";
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import LandingScreen from "../components/landing/LandingScreen";
 
 const SPLASH_DURATION_MS = 1500;
 
-export default function SplashScreen() {
+// On native the app opens straight into the tool, so `/` stays a short
+// branded splash. On web `/` is the landing page.
+function NativeSplash() {
   const router = useRouter();
 
   useEffect(() => {
@@ -22,6 +25,13 @@ export default function SplashScreen() {
       <Text style={styles.tagline}>Sniffing out bots in your comments.</Text>
     </View>
   );
+}
+
+export default function Index() {
+  if (Platform.OS === "web") {
+    return <LandingScreen />;
+  }
+  return <NativeSplash />;
 }
 
 const styles = StyleSheet.create({
