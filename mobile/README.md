@@ -33,6 +33,8 @@ npx expo start --web    # web — landing page + app at http://localhost:8081
 
 Sage board background, moss/straw/rust risk palette (rust is reserved for high-risk states), Zilla Slab + Archivo + Space Mono, flat surfaces with hairline borders. The low/medium/high framing on cards and the gauge tier are **UI heuristics** derived in `lib/riskLevels.js` — the API contract only returns percentages, so retune thresholds there.
 
+The reasoning behind the revamp (token system, contract-first categories, the `/analysis/[videoId]` route and its deep-link recovery, English copy) is written up in [`../docs/decisions/002-mobile-design-revamp.md`](../docs/decisions/002-mobile-design-revamp.md).
+
 ## Backend
 
 Calls the backend per [`../docs/api-contract.md`](../docs/api-contract.md). `lib/mockApi.js` stands in until `POST /analyze` is live — swap it inside `context/AnalysisContext.jsx`. Test-error keywords work against the mock: paste a URL containing `notfound`, `nocomments`, `quota`, or `internal` to preview each error state.

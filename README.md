@@ -85,7 +85,7 @@ Never commit `.env` — it's already in `.gitignore`.
 ## Docs
 
 - [`docs/api-contract.md`](docs/api-contract.md) — request/response format between mobile and backend
-- [`docs/decisions/`](docs/decisions/) — why we chose YouTube over TikTok, why BERT, etc.
+- [`docs/decisions/`](docs/decisions/) — why we chose YouTube over TikTok, why BERT, the mobile design revamp, etc.
 
 ## Known limitations
 
