@@ -9,16 +9,16 @@ import { color, hairline, layout, radius, type } from "../../theme/tokens";
 
 const CARDS = [
   {
-    title: "Sulit dikenali kasat mata",
-    body: "Komentar buatan bot makin meniru gaya bahasa manusia biasa.",
+    title: "Hard to spot by eye",
+    body: "Bot-written comments increasingly mimic the way ordinary people write.",
   },
   {
-    title: "Membentuk opini publik",
-    body: "Komentar teratas sering dianggap mewakili suara mayoritas.",
+    title: "They shape public opinion",
+    body: "Top comments are often read as the voice of the majority.",
   },
   {
-    title: "Keterampilan yang bisa dilatih",
-    body: "Mengenali pola mencurigakan adalah bagian dari literasi media.",
+    title: "A skill you can train",
+    body: "Recognizing suspicious patterns is part of media literacy.",
   },
 ];
 
@@ -28,8 +28,8 @@ export default function WhySection() {
 
   return (
     <SectionShell style={styles.section}>
-      <Text style={type.monoLabel}>KENAPA PENTING</Text>
-      <Text style={[type.h2, styles.heading]}>Kenapa ini penting</Text>
+      <Text style={type.monoLabel}>WHY IT MATTERS</Text>
+      <Text style={[type.h2, styles.heading]}>Why this matters</Text>
 
       <View style={[styles.cards, isWide && styles.cardsWide]}>
         {CARDS.map((card) => (

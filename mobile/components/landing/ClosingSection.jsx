@@ -8,17 +8,17 @@ export default function ClosingSection({ onTry }) {
     <SectionShell style={styles.section}>
       <View style={styles.callout}>
         <Text style={styles.calloutText}>
-          Kratt tidak menghapus atau memblokir komentar. Tujuannya melatih
-          kebiasaan membaca yang lebih kritis, sesuai semangat literasi media
-          yang diusung UNESCO Youth Hackathon.
+          Kratt doesn&apos;t delete or block comments. It exists to train a
+          more critical reading habit, in the spirit of media literacy
+          championed by the UNESCO Youth Hackathon.
         </Text>
       </View>
 
       <View style={styles.cta}>
         <Text style={[type.h2, styles.ctaHeading]}>
-          Mulai baca kolom komentar dengan lebih kritis
+          Start reading comment sections more critically
         </Text>
-        <AppButton label="Coba Kratt sekarang" onPress={onTry} />
+        <AppButton label="Try Kratt now" onPress={onTry} />
       </View>
 
       <View style={styles.footer}>

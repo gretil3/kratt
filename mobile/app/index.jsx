@@ -26,7 +26,7 @@ function NativeSplash() {
         <View style={styles.brandMark} />
         <Text style={styles.title}>Kratt</Text>
       </View>
-      <Text style={styles.tagline}>Mengendus bot di kolom komentar.</Text>
+      <Text style={styles.tagline}>Sniffing out bots in your comments.</Text>
     </View>
   );
 }

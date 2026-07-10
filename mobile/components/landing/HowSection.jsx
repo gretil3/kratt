@@ -3,20 +3,20 @@ import SectionShell from "./SectionShell";
 import { color, font, type } from "../../theme/tokens";
 
 const STEPS = [
-  { title: "Salin link video YouTube" },
-  { title: "Tempel di kolom analisis" },
-  { title: "Baca skor dan breakdown kategori" },
+  { title: "Copy a YouTube video link" },
+  { title: "Paste it into the analyzer" },
+  { title: "Read the score and category breakdown" },
   {
-    title: "Simpulkan sendiri",
-    body: "Gunakan skor sebagai titik awal berpikir kritis, bukan vonis akhir.",
+    title: "Draw your own conclusion",
+    body: "Use the score as a starting point for critical thinking, not a final verdict.",
   },
 ];
 
 export default function HowSection() {
   return (
     <SectionShell style={styles.section}>
-      <Text style={type.monoLabel}>CARA KERJA</Text>
-      <Text style={[type.h2, styles.heading]}>Cara pakai Kratt</Text>
+      <Text style={type.monoLabel}>HOW IT WORKS</Text>
+      <Text style={[type.h2, styles.heading]}>How to use Kratt</Text>
 
       <View style={styles.steps}>
         {STEPS.map((step, index) => {

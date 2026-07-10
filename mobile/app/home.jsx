@@ -38,10 +38,9 @@ export default function HomeScreen() {
           <Text style={styles.brand}>Kratt</Text>
         </View>
 
-        <Text style={styles.heading}>Tempel link video YouTube</Text>
+        <Text style={styles.heading}>Paste a YouTube link</Text>
         <Text style={styles.subheading}>
-          Kratt membaca kolom komentarnya dan menandai kemungkinan aktivitas
-          bot.
+          Kratt reads the comment section and flags likely bot activity.
         </Text>
 
         <TextInput
@@ -56,12 +55,12 @@ export default function HomeScreen() {
         />
         {touched && isEmpty ? (
           <Text style={styles.errorHint}>
-            Tempel link dulu sebelum menganalisis.
+            Paste a link before analyzing.
           </Text>
         ) : null}
 
         <AppButton
-          label="Analisis"
+          label="Analyze"
           onPress={handleAnalyze}
           style={styles.button}
         />

@@ -26,18 +26,18 @@ export default function HeroSection({ onAnalyze, onSeeHow }) {
           isWide && { fontSize: 48, lineHeight: 56 },
         ]}
       >
-        Kenali mana komentar asli, mana yang dibuat bot
+        Tell real comments from bot-made ones
       </Text>
 
       <Text style={styles.subhead}>
-        Tempel link video YouTube, dan Kratt akan memecah kolom komentarnya
-        jadi bukti yang bisa dibaca siapa saja.
+        Paste a YouTube link, and Kratt breaks the comment section down into
+        evidence anyone can read.
       </Text>
 
       <View style={styles.buttons}>
-        <AppButton label="Analisis video" onPress={onAnalyze} />
+        <AppButton label="Analyze a video" onPress={onAnalyze} />
         <AppButton
-          label="Lihat cara kerja"
+          label="See how it works"
           variant="secondary"
           onPress={onSeeHow}
         />

@@ -7,9 +7,9 @@ import { parseVideoId } from "../lib/youtube";
 import { color, type } from "../theme/tokens";
 
 const STATUS_MESSAGES = [
-  "Mengambil komentar",
-  "Membaca pola",
-  "Menghitung skor",
+  "Pulling comments",
+  "Reading patterns",
+  "Finishing the count",
 ];
 const STATUS_INTERVAL_MS = 1100;
 

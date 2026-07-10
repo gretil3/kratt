@@ -34,16 +34,16 @@ export default function LandingNav({ onNavigate, onTry }) {
 
         {isWide ? (
           <View style={styles.links}>
-            <NavLink label="Cara kerja" onPress={() => onNavigate("how")} />
+            <NavLink label="How it works" onPress={() => onNavigate("how")} />
             <NavLink
-              label="Kategori bukti"
+              label="Evidence categories"
               onPress={() => onNavigate("research")}
             />
-            <NavLink label="Tentang" onPress={() => onNavigate("about")} />
+            <NavLink label="About" onPress={() => onNavigate("about")} />
           </View>
         ) : null}
 
-        <AppButton size="sm" label="Coba sekarang" onPress={onTry} />
+        <AppButton size="sm" label="Try it now" onPress={onTry} />
       </View>
     </View>
   );

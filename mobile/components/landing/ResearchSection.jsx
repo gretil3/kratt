@@ -15,16 +15,17 @@ export default function ResearchSection() {
 
   return (
     <SectionShell style={styles.section}>
-      <Text style={type.monoLabel}>KATEGORI BUKTI</Text>
+      <Text style={type.monoLabel}>EVIDENCE CATEGORIES</Text>
       <Text style={[type.h2, styles.heading]}>
-        Empat kategori yang dibaca Kratt
+        The four categories Kratt reads
       </Text>
       <Text style={styles.paragraph}>
-        Empat kategori ini mengambil sinyal yang umum dipakai dalam riset
-        deteksi perilaku tidak autentik di platform besar — pola bahasa yang
-        berulang, duplikasi lintas akun dan video, serta struktur khas pesan
-        promosi. Setiap komentar digolongkan ke satu kategori, dan skor bot
-        adalah porsi komentar yang tidak tergolong asli.
+        These categories draw on signals commonly used in research on
+        inauthentic behavior across major platforms — repetitive language
+        patterns, duplication across accounts and videos, and the telltale
+        structure of promotional messages. Every comment is sorted into one
+        category, and the bot score is simply the share of comments that
+        don&apos;t read as genuine.
       </Text>
 
       <View style={styles.grid}>

@@ -1,30 +1,30 @@
 // The four comment categories from docs/api-contract.md, with the display
-// metadata shared by the landing page ("Kategori bukti" section) and the
+// metadata shared by the landing page ("Evidence categories" section) and the
 // analysis screen's category cards. Keys match `breakdown` in the response.
 export const CATEGORIES = [
   {
     key: "ads_spam",
     stamp: "SPAM",
-    label: "Iklan & spam",
-    description: "Tautan promosi dan pola penipuan",
+    label: "Ads & spam",
+    description: "Promotional links and scam patterns",
   },
   {
     key: "copy_paste",
     stamp: "DUP",
-    label: "Salin-tempel",
-    description: "Komentar nyaris identik di banyak video",
+    label: "Copy-paste",
+    description: "Near-identical comments across many videos",
   },
   {
     key: "low_effort",
-    stamp: "MIN",
-    label: "Minim usaha",
-    description: "Frasa pendek yang generik dan seragam",
+    stamp: "LOW",
+    label: "Low effort",
+    description: "Generic, templated short phrases",
   },
   {
     key: "genuine",
-    stamp: "ASLI",
-    label: "Komentar asli",
-    description: "Tidak terjaring heuristik bot mana pun",
+    stamp: "REAL",
+    label: "Genuine",
+    description: "Not flagged by any bot heuristic",
     neutral: true, // a healthy share, not a bot signal
   },
 ];

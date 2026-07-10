@@ -11,9 +11,9 @@ export function tierForScore(botPercentage) {
 }
 
 export const TIER_LABELS = {
-  low: "Indikasi rendah",
-  medium: "Indikasi sedang",
-  high: "Indikasi tinggi",
+  low: "Low indication",
+  medium: "Moderate indication",
+  high: "High indication",
 };
 
 // A single category's share of all comments → level chip on its card.
@@ -24,8 +24,8 @@ export function levelForShare(percentage) {
 }
 
 export const LEVEL_LABELS = {
-  low: "Rendah",
-  medium: "Sedang",
-  high: "Tinggi",
-  neutral: "Bukan indikasi",
+  low: "Low",
+  medium: "Medium",
+  high: "High",
+  neutral: "Not a bot signal",
 };
