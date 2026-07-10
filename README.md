@@ -23,8 +23,11 @@ kratt/
 │   ├── notebooks/        # labeling experiments, EDA
 │   ├── requirements.txt
 │   └── README.md
-├── mobile/                # React Native (Expo)
-│   ├── app/
+├── mobile/                # React Native (Expo) — app + web landing page
+│   ├── app/               # screens (expo-router): home, analyzing, analysis/[videoId], error
+│   ├── components/        # landing sections + shared UI (score gauge, category cards)
+│   ├── theme/             # design tokens — single source of truth for color/type
+│   ├── lib/               # mock API per the contract, category/risk helpers
 │   ├── package.json
 │   └── README.md
 ├── docs/
@@ -57,10 +60,11 @@ Backend runs at `http://localhost:8000`. Interactive API docs at `http://localho
 ```bash
 cd mobile
 npm install
-npx expo start
+npx expo start          # native
+npx expo start --web    # web build — landing page + app at http://localhost:8081
 ```
 
-Scan the QR code with the **Expo Go** app on your phone to run it on a real device.
+Scan the QR code with the **Expo Go** app on your phone to run it on a real device. The web build serves the public landing page at `/` and the same analyzer flow behind it.
 
 ### Environment variables
 
@@ -81,7 +85,7 @@ Never commit `.env` — it's already in `.gitignore`.
 ## Docs
 
 - [`docs/api-contract.md`](docs/api-contract.md) — request/response format between mobile and backend
-- [`docs/decisions/`](docs/decisions/) — why we chose YouTube over TikTok, why BERT, etc.
+- [`docs/decisions/`](docs/decisions/) — why we chose YouTube over TikTok, why BERT, the mobile design revamp, etc.
 
 ## Known limitations
 

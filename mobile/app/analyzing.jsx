@@ -3,6 +3,8 @@ import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useAnalysis } from "../context/AnalysisContext";
+import { parseVideoId } from "../lib/youtube";
+import { color, type } from "../theme/tokens";
 
 const STATUS_MESSAGES = [
   "Pulling comments",
@@ -29,14 +31,19 @@ export default function AnalyzingScreen() {
     hasStarted.current = true;
 
     runAnalysis(videoUrl).then((outcome) => {
-      router.replace(outcome.ok ? "/results" : "/error");
+      if (!outcome.ok) {
+        router.replace("/error");
+        return;
+      }
+      const videoId = parseVideoId(videoUrl);
+      router.replace(videoId ? `/analysis/${videoId}` : "/home");
     });
   }, [videoUrl, runAnalysis, router]);
 
   return (
     <View style={styles.container}>
-      <StatusBar style="light" />
-      <ActivityIndicator size="large" color="#5B6CFF" />
+      <StatusBar style="dark" />
+      <ActivityIndicator size="large" color={color.moss} />
       <Text style={styles.status}>{STATUS_MESSAGES[statusIndex]}…</Text>
     </View>
   );
@@ -45,13 +52,13 @@ export default function AnalyzingScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#0B0F1A",
+    backgroundColor: color.bg,
     alignItems: "center",
     justifyContent: "center",
     gap: 16,
   },
   status: {
-    fontSize: 16,
-    color: "#C7CCDA",
+    ...type.body,
+    color: color.inkMuted,
   },
 });
