@@ -5,10 +5,11 @@
     "scheme": "kratt",
     "version": "1.0.0",
     "orientation": "portrait",
-    "userInterfaceStyle": "dark",
+    "userInterfaceStyle": "light",
+    "backgroundColor": "#EEF0EA",
     "newArchEnabled": false,
     "splash": {
-      "backgroundColor": "#0B0F1A"
+      "backgroundColor": "#EEF0EA"
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
