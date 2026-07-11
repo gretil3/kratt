@@ -3,6 +3,21 @@
 **Status:** Shipped (branch `feature/mobile-design-revamp`)
 **Date:** 2026-07-10
 
+> **Update 2026-07-11 — Decision 1 superseded by the themed system.**
+> The visual direction shipped after this ADR is **not** the flat "evidence
+> board" look described in Decision 1. The live source of truth is
+> `mobile/theme/themes.js`: a dark/light theme pair (dark is the default,
+> toggled via `context/ThemeContext.jsx` and read everywhere through
+> `useTheme()`), a brand gradient trio (violet `#7C5CFF` / teal `#2FE6C8` /
+> pink `#FF3EA5`) plus per-category evidence gradients, and per-theme risk
+> colors (low = teal, medium = amber, high = red — tuned separately for each
+> mode's contrast). Gradients and soft glows are in — "no shadows/gradients"
+> no longer applies. The sage/moss/straw/rust palette is retired;
+> `mobile/theme/tokens.js` now only carries the font families (Zilla Slab +
+> Archivo + Space Mono, which did survive) for `themes.js` to consume.
+> Decisions 2–5 (contract-first categories, client-side risk thresholds,
+> routing, web landing, English copy) still stand.
+
 ## Context
 
 The scaffolded app (PR #1) had five working screens in ad-hoc dark-navy styling with no theme file, and the web build was configured but not runnable. For the hackathon we needed a public landing page and a result screen that presents the bot score as readable evidence — sharing one codebase and one design system across web and native.

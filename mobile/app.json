@@ -5,11 +5,11 @@
     "scheme": "kratt",
     "version": "1.0.0",
     "orientation": "portrait",
-    "userInterfaceStyle": "light",
-    "backgroundColor": "#EEF0EA",
+    "userInterfaceStyle": "automatic",
+    "backgroundColor": "#08080B",
     "newArchEnabled": false,
     "splash": {
-      "backgroundColor": "#EEF0EA"
+      "backgroundColor": "#08080B"
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
@@ -17,7 +17,8 @@
     },
     "android": {},
     "web": {
-      "bundler": "metro"
+      "bundler": "metro",
+      "output": "static"
     },
     "plugins": ["expo-router"]
   }

@@ -1,5 +1,6 @@
 import { useMemo } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
+import { useRouter } from "expo-router";
 import { useTheme } from "../../context/ThemeContext";
 import SectionShell from "./SectionShell";
 import GradientBlob from "../ui/GradientBlob";
@@ -23,6 +24,7 @@ const ITEMS = [
 ];
 
 export default function WhySection() {
+  const router = useRouter();
   const theme = useTheme();
   const styles = useMemo(() => makeStyles(theme), [theme]);
 
@@ -48,6 +50,18 @@ export default function WhySection() {
           </View>
         ))}
       </View>
+
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel="Read the manufactured consensus explainer"
+        onPress={() => router.push("/onboarding")}
+        hitSlop={8}
+        style={styles.explainerLink}
+      >
+        <Text style={styles.explainerText}>
+          New to this? Read the two-minute explainer →
+        </Text>
+      </Pressable>
     </SectionShell>
   );
 }
@@ -92,6 +106,14 @@ function makeStyles(theme) {
       fontFamily: type.h3.fontFamily,
       fontSize: 22,
       color: color.inkFaint,
+    },
+    explainerLink: {
+      marginTop: 20,
+      alignSelf: "flex-start",
+    },
+    explainerText: {
+      ...type.body,
+      color: color.ink,
     },
   });
 }

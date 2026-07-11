@@ -48,6 +48,11 @@ export default function LandingNav({ onNavigate, onTry }) {
               style={styles.link}
             />
             <NavLink
+              label="Why Kratt"
+              onPress={() => onNavigate("gap")}
+              style={styles.link}
+            />
+            <NavLink
               label="About"
               onPress={() => onNavigate("about")}
               style={styles.link}

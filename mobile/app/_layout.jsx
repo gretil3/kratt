@@ -1,4 +1,5 @@
 import { Stack } from "expo-router";
+import Head from "expo-router/head";
 import {
   useFonts,
   ZillaSlab_500Medium,
@@ -46,6 +47,11 @@ export default function RootLayout() {
   return (
     <ThemeProvider>
       <AnalysisProvider>
+        {/* Sets document.title on web after hydration (the static shell's
+            <title> only covers the pre-JS page); no-op on native. */}
+        <Head>
+          <title>Kratt — who&apos;s really talking in the comments?</title>
+        </Head>
         <RootNavigator />
       </AnalysisProvider>
     </ThemeProvider>
