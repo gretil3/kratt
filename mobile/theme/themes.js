@@ -107,7 +107,8 @@ const darkRisk = {
 };
 
 const lightRisk = {
-  low: { main: "#12B39B", text: "#0E8C7A", tint: "rgba(18,179,155,0.14)" },
+  // text shades sit at ≥4.5:1 on white (WCAG AA for small text).
+  low: { main: "#12B39B", text: "#0B7261", tint: "rgba(18,179,155,0.14)" },
   medium: { main: "#C77F0A", text: "#9A6206", tint: "rgba(199,127,10,0.14)" },
   high: { main: "#E23D3D", text: "#C42B2B", tint: "rgba(226,61,61,0.12)" },
   neutral: { main: lightColor.inkMuted, text: lightColor.inkMuted, tint: "rgba(20,20,26,0.06)" },

@@ -15,7 +15,9 @@ import { useAnalysis } from "../../context/AnalysisContext";
 import { useTheme } from "../../context/ThemeContext";
 import PillButton from "../../components/ui/PillButton";
 import CategoryCard from "../../components/ui/CategoryCard";
+import GuessPanel from "../../components/ui/GuessPanel";
 import ScoreGauge from "../../components/ui/ScoreGauge";
+import SourceChecklist from "../../components/ui/SourceChecklist";
 import ThemeToggle from "../../components/ui/ThemeToggle";
 import ThemedStatusBar from "../../components/ui/ThemedStatusBar";
 import { CATEGORIES } from "../../lib/categories";
@@ -32,12 +34,25 @@ import { accent } from "../../theme/themes";
  * @property {string[]} sample_flagged_comments
  */
 
+// One neutral, non-lecturing sentence about the gap between instinct and
+// evidence. Ten points either way counts as agreement.
+function reflectionFor(guess, actual) {
+  if (Math.abs(guess - actual) <= 10) {
+    return "Close — your read of this comment section roughly matches the pattern evidence.";
+  }
+  if (guess < actual) {
+    return "The section reads more automated than it looked — engineered comments are written to blend in.";
+  }
+  return "The section reads more human than it looked — an off-feeling comment section isn't always staged.";
+}
+
 export default function AnalysisScreen() {
   const router = useRouter();
   const theme = useTheme();
   const styles = useMemo(() => makeStyles(theme), [theme]);
   const { videoId } = useLocalSearchParams();
-  const { videoUrl, setVideoUrl, result, reset } = useAnalysis();
+  const { videoUrl, setVideoUrl, result, reset, guess, setGuess } =
+    useAnalysis();
   const { width } = useWindowDimensions();
   // On a cold deep link this screen mounts before the root navigator is
   // ready; navigating then throws. Wait for the root state key.
@@ -80,6 +95,18 @@ export default function AnalysisScreen() {
     router.replace("/home");
   };
 
+  // Guess-before-reveal: the result stays hidden until the user commits an
+  // estimate. `guess` is reset on every runAnalysis, so re-runs (deep links,
+  // refreshes, new videos) always pass through this step.
+  if (guess == null) {
+    return (
+      <ScrollView style={styles.screen} contentContainerStyle={styles.guessScroll}>
+        <ThemedStatusBar />
+        <GuessPanel onSubmit={setGuess} />
+      </ScrollView>
+    );
+  }
+
   return (
     <ScrollView style={styles.screen} contentContainerStyle={styles.scroll}>
       <ThemedStatusBar />
@@ -98,6 +125,15 @@ export default function AnalysisScreen() {
           <Text style={styles.gaugeFootnote}>
             Based on {total_comments_analyzed.toLocaleString("en-US")} comments
             analyzed
+          </Text>
+        </View>
+
+        <View style={styles.guessCompare}>
+          <Text style={styles.guessCompareLine}>
+            Your guess: {guess}% — Kratt: {bot_percentage}%
+          </Text>
+          <Text style={styles.guessCompareNote}>
+            {reflectionFor(guess, bot_percentage)}
           </Text>
         </View>
 
@@ -143,6 +179,8 @@ export default function AnalysisScreen() {
             </View>
           </>
         ) : null}
+
+        <SourceChecklist style={styles.checklist} />
 
         <Text style={styles.footnote}>
           This score is a starting point for critical thinking, not a final
@@ -193,9 +231,32 @@ function makeStyles(theme) {
       marginTop: 20,
       marginBottom: 28,
     },
+    guessScroll: {
+      flexGrow: 1,
+      justifyContent: "center",
+      padding: 24,
+    },
     gaugeBlock: {
       alignItems: "center",
+      marginBottom: 20,
+    },
+    guessCompare: {
+      backgroundColor: color.surface,
+      borderWidth: 1,
+      borderColor: color.border,
+      borderRadius: radius.md,
+      padding: 16,
+      gap: 6,
       marginBottom: 36,
+    },
+    guessCompareLine: {
+      fontFamily: font.monoBold,
+      fontSize: 14,
+      lineHeight: 20,
+      color: color.ink,
+    },
+    guessCompareNote: {
+      ...type.small,
     },
     gaugeFootnote: {
       ...type.small,
@@ -238,6 +299,9 @@ function makeStyles(theme) {
     flaggedText: {
       ...type.body,
       flex: 1,
+    },
+    checklist: {
+      marginBottom: 28,
     },
     footnote: {
       ...type.small,

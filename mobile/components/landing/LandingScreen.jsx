@@ -9,6 +9,7 @@ import HeroSection from "./HeroSection";
 import WhySection from "./WhySection";
 import ResearchSection from "./ResearchSection";
 import HowSection from "./HowSection";
+import GapSection from "./GapSection";
 import ClosingSection from "./ClosingSection";
 
 // Room the sticky nav (64) plus breathing space takes above an anchored section.
@@ -60,6 +61,9 @@ export default function LandingScreen() {
         </View>
         <View onLayout={registerSection("how")}>
           <HowSection />
+        </View>
+        <View onLayout={registerSection("gap")}>
+          <GapSection />
         </View>
         <View onLayout={registerSection("about")}>
           <ClosingSection onTry={goToAnalyzer} />
