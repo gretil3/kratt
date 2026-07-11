@@ -1,13 +1,8 @@
-import {
-  StyleSheet,
-  Text,
-  useWindowDimensions,
-  View,
-} from "react-native";
+import { StyleSheet, Text, useWindowDimensions, View } from "react-native";
 import SectionShell from "./SectionShell";
 import CategoryCard from "../ui/CategoryCard";
 import { CATEGORIES } from "../../lib/categories";
-import { color, layout, type } from "../../theme/tokens";
+import { layout, type } from "../../theme/darkTokens";
 
 export default function ResearchSection() {
   const { width } = useWindowDimensions();
@@ -29,9 +24,11 @@ export default function ResearchSection() {
       </Text>
 
       <View style={styles.grid}>
-        {CATEGORIES.map((category) => (
+        {CATEGORIES.map((category, index) => (
           <CategoryCard
             key={category.key}
+            categoryKey={category.key}
+            seed={index}
             stamp={category.stamp}
             label={category.label}
             description={category.description}
@@ -53,7 +50,6 @@ const styles = StyleSheet.create({
   },
   paragraph: {
     ...type.body,
-    color: color.inkMuted,
     maxWidth: 680,
     marginBottom: 28,
   },

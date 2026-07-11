@@ -13,14 +13,13 @@ import {
 } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useAnalysis } from "../../context/AnalysisContext";
-import AppButton from "../../components/ui/AppButton";
+import PillButton from "../../components/ui/PillButton";
 import CategoryCard from "../../components/ui/CategoryCard";
 import ScoreGauge from "../../components/ui/ScoreGauge";
-import WovenDivider from "../../components/ui/WovenDivider";
 import { CATEGORIES } from "../../lib/categories";
 import { levelForShare } from "../../lib/riskLevels";
 import { canonicalUrl, parseVideoId } from "../../lib/youtube";
-import { color, font, hairline, radius, type } from "../../theme/tokens";
+import { color, font, radius, type } from "../../theme/darkTokens";
 
 /**
  * Response shape per docs/api-contract.md (`POST /analyze`):
@@ -79,13 +78,13 @@ export default function AnalysisScreen() {
 
   return (
     <ScrollView style={styles.screen} contentContainerStyle={styles.scroll}>
-      <StatusBar style="dark" />
+      <StatusBar style="light" />
       <View style={styles.content}>
         <Text style={type.monoLabel}>ANALYSIS RESULT</Text>
         {/* The contract has no videoTitle, so the canonical URL is the header. */}
         <Text style={styles.sourceUrl}>{canonicalUrl(videoId)}</Text>
 
-        <WovenDivider style={styles.divider} />
+        <View style={styles.divider} />
 
         <View style={styles.gaugeBlock}>
           <ScoreGauge value={bot_percentage} />
@@ -99,11 +98,13 @@ export default function AnalysisScreen() {
           EVIDENCE CATEGORIES
         </Text>
         <View style={styles.grid}>
-          {CATEGORIES.map((category) => {
+          {CATEGORIES.map((category, index) => {
             const percent = breakdown[category.key] ?? 0;
             return (
               <CategoryCard
                 key={category.key}
+                categoryKey={category.key}
+                seed={index}
                 stamp={category.stamp}
                 label={category.label}
                 description={category.description}
@@ -141,7 +142,7 @@ export default function AnalysisScreen() {
           verdict — read the examples and judge for yourself.
         </Text>
 
-        <AppButton
+        <PillButton
           label="Analyze another video"
           onPress={handleAnalyzeAnother}
           style={styles.button}
@@ -173,6 +174,8 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   divider: {
+    height: 1,
+    backgroundColor: color.border,
     marginTop: 20,
     marginBottom: 28,
   },
@@ -205,10 +208,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 12,
     backgroundColor: color.surface,
-    borderWidth: hairline,
-    borderColor: color.hairline,
+    borderWidth: 1,
+    borderColor: color.border,
     borderLeftWidth: 2,
-    borderLeftColor: color.straw,
+    borderLeftColor: "#7C5CFF",
     borderRadius: radius.sm,
     padding: 14,
   },
@@ -216,7 +219,7 @@ const styles = StyleSheet.create({
     fontFamily: font.monoBold,
     fontSize: 12,
     lineHeight: 21,
-    color: color.strawInk,
+    color: "#7C5CFF",
   },
   flaggedText: {
     ...type.body,

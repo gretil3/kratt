@@ -1,73 +1,76 @@
-import {
-  StyleSheet,
-  Text,
-  useWindowDimensions,
-  View,
-} from "react-native";
+import { StyleSheet, Text, useWindowDimensions, View } from "react-native";
 import SectionShell from "./SectionShell";
-import AppButton from "../ui/AppButton";
-import { color, font, hairline, layout, radius, type } from "../../theme/tokens";
+import PillButton from "../ui/PillButton";
+import CategoryPillRow from "./CategoryPillRow";
+import { color, font, layout, radius, type } from "../../theme/darkTokens";
 
 export default function HeroSection({ onAnalyze, onSeeHow }) {
   const { width } = useWindowDimensions();
   const isWide = width >= layout.breakpoint;
 
   return (
-    <SectionShell style={styles.section}>
-      <View style={styles.badge}>
-        <View style={styles.badgeDot} />
-        <Text style={styles.badgeText}>UNESCO YOUTH HACKATHON 2026</Text>
-      </View>
+    <View>
+      <SectionShell style={styles.section}>
+        <View style={styles.badge}>
+          <View style={styles.badgeDot} />
+          <Text style={styles.badgeText}>UNESCO YOUTH HACKATHON 2026</Text>
+        </View>
 
-      <Text
-        style={[
-          type.display,
-          styles.headline,
-          isWide && { fontSize: 48, lineHeight: 56 },
-        ]}
-      >
-        Tell real comments from bot-made ones
-      </Text>
+        <Text
+          style={[
+            type.display,
+            styles.headline,
+            isWide && { fontSize: 56, lineHeight: 62 },
+          ]}
+        >
+          Kratt reads comment sections so bots can&apos;t hide
+        </Text>
 
-      <Text style={styles.subhead}>
-        Paste a YouTube link, and Kratt breaks the comment section down into
-        evidence anyone can read.
-      </Text>
+        <Text style={styles.subhead}>
+          Paste a YouTube link, and Kratt breaks the comment section down into
+          evidence anyone can read.
+        </Text>
 
-      <View style={styles.buttons}>
-        <AppButton label="Analyze a video" onPress={onAnalyze} />
-        <AppButton
-          label="See how it works"
-          variant="secondary"
-          onPress={onSeeHow}
-        />
-      </View>
-    </SectionShell>
+        <View style={styles.buttons}>
+          <PillButton label="Analyze a video" onPress={onAnalyze} />
+          <PillButton
+            label="See how it works"
+            variant="secondary"
+            onPress={onSeeHow}
+          />
+        </View>
+      </SectionShell>
+
+      <SectionShell style={styles.pillSection}>
+        <CategoryPillRow />
+      </SectionShell>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   section: {
-    paddingTop: 56,
-    paddingBottom: 56,
+    paddingTop: 48,
+    paddingBottom: 36,
   },
   badge: {
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
     alignSelf: "flex-start",
-    borderWidth: hairline,
-    borderColor: color.hairline,
+    borderWidth: 1,
+    borderColor: color.border,
     backgroundColor: color.surface,
-    borderRadius: radius.sm,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
+    borderRadius: radius.pill,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
     marginBottom: 24,
   },
   badgeDot: {
     width: 6,
     height: 6,
-    backgroundColor: color.straw,
+    borderRadius: 3,
+    backgroundColor: "#2FE6C8",
   },
   badgeText: {
     fontFamily: font.monoBold,
@@ -76,12 +79,11 @@ const styles = StyleSheet.create({
     color: color.inkMuted,
   },
   headline: {
-    maxWidth: 760,
-    marginBottom: 16,
+    maxWidth: 820,
+    marginBottom: 18,
   },
   subhead: {
     ...type.bodyLarge,
-    color: color.inkMuted,
     maxWidth: 620,
     marginBottom: 28,
   },
@@ -89,5 +91,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
     gap: 12,
+  },
+  pillSection: {
+    paddingBottom: 8,
   },
 });

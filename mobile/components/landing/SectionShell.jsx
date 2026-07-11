@@ -1,5 +1,5 @@
 import { StyleSheet, View } from "react-native";
-import { layout } from "../../theme/tokens";
+import { layout } from "../../theme/darkTokens";
 
 // Centers section content to the landing max-width with the shared gutter.
 export default function SectionShell({ children, style, innerStyle }) {

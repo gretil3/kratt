@@ -13,7 +13,7 @@ import {
   SpaceMono_700Bold,
 } from "@expo-google-fonts/space-mono";
 import { AnalysisProvider } from "../context/AnalysisContext";
-import { color } from "../theme/tokens";
+import { color } from "../theme/darkTokens";
 
 export default function RootLayout() {
   const [fontsLoaded, fontError] = useFonts({

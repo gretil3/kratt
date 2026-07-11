@@ -10,13 +10,15 @@ import {
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useAnalysis } from "../context/AnalysisContext";
-import AppButton from "../components/ui/AppButton";
-import { color, font, hairline, radius, type } from "../theme/tokens";
+import PillButton from "../components/ui/PillButton";
+import GradientBlob from "../components/ui/GradientBlob";
+import { color, font, gradients, radius, type } from "../theme/darkTokens";
 
 export default function HomeScreen() {
   const router = useRouter();
   const { videoUrl, setVideoUrl } = useAnalysis();
   const [touched, setTouched] = useState(false);
+  const [focused, setFocused] = useState(false);
 
   const isEmpty = videoUrl.trim().length === 0;
 
@@ -31,10 +33,10 @@ export default function HomeScreen() {
       style={styles.container}
       behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
-      <StatusBar style="dark" />
+      <StatusBar style="light" />
       <View style={styles.content}>
         <View style={styles.brandRow}>
-          <View style={styles.brandMark} />
+          <GradientBlob colors={gradients.brand} radius={radius.sm} style={styles.brandMark} />
           <Text style={styles.brand}>Kratt</Text>
         </View>
 
@@ -44,14 +46,16 @@ export default function HomeScreen() {
         </Text>
 
         <TextInput
-          style={styles.input}
+          style={[styles.input, focused && styles.inputFocused]}
           placeholder="https://youtube.com/watch?v=..."
-          placeholderTextColor="rgba(28, 27, 24, 0.35)"
+          placeholderTextColor="rgba(245,245,247,0.35)"
           autoCapitalize="none"
           autoCorrect={false}
           keyboardType="url"
           value={videoUrl}
           onChangeText={setVideoUrl}
+          onFocus={() => setFocused(true)}
+          onBlur={() => setFocused(false)}
         />
         {touched && isEmpty ? (
           <Text style={styles.errorHint}>
@@ -59,7 +63,7 @@ export default function HomeScreen() {
           </Text>
         ) : null}
 
-        <AppButton
+        <PillButton
           label="Analyze"
           onPress={handleAnalyze}
           style={styles.button}
@@ -86,16 +90,15 @@ const styles = StyleSheet.create({
   brandRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
+    gap: 10,
     marginBottom: 12,
   },
   brandMark: {
-    width: 8,
-    height: 8,
-    backgroundColor: color.straw,
+    width: 22,
+    height: 22,
   },
   brand: {
-    fontFamily: font.slab,
+    fontFamily: font.display,
     fontSize: 18,
     color: color.ink,
   },
@@ -104,23 +107,25 @@ const styles = StyleSheet.create({
   },
   subheading: {
     ...type.body,
-    color: color.inkMuted,
     marginBottom: 12,
   },
   input: {
     backgroundColor: color.surface,
     borderRadius: radius.md,
-    borderWidth: hairline,
-    borderColor: color.hairline,
+    borderWidth: 1,
+    borderColor: color.border,
     paddingHorizontal: 16,
     paddingVertical: 14,
     fontFamily: font.mono,
     fontSize: 14,
     color: color.ink,
   },
+  inputFocused: {
+    borderColor: "#7C5CFF",
+  },
   errorHint: {
     ...type.small,
-    color: color.rustInk,
+    color: "#FF9A9A",
   },
   button: {
     marginTop: 12,

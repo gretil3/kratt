@@ -8,12 +8,10 @@ import WhySection from "./WhySection";
 import ResearchSection from "./ResearchSection";
 import HowSection from "./HowSection";
 import ClosingSection from "./ClosingSection";
-import SectionShell from "./SectionShell";
-import WovenDivider from "../ui/WovenDivider";
-import { color } from "../../theme/tokens";
+import { color } from "../../theme/darkTokens";
 
-// Room the sticky nav (60) plus breathing space takes above an anchored section.
-const ANCHOR_OFFSET = 76;
+// Room the sticky nav (64) plus breathing space takes above an anchored section.
+const ANCHOR_OFFSET = 80;
 
 export default function LandingScreen() {
   const router = useRouter();
@@ -38,7 +36,7 @@ export default function LandingScreen() {
 
   return (
     <View style={styles.root}>
-      <StatusBar style="dark" />
+      <StatusBar style="light" />
       <ScrollView
         ref={scrollRef}
         stickyHeaderIndices={[0]}
@@ -50,11 +48,6 @@ export default function LandingScreen() {
           onAnalyze={goToAnalyzer}
           onSeeHow={() => scrollToSection("how")}
         />
-
-        {/* The one deliberate seam on this screen. */}
-        <SectionShell>
-          <WovenDivider />
-        </SectionShell>
 
         <View onLayout={registerSection("why")}>
           <WhySection />

@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from "react-native";
 import Svg, { Circle } from "react-native-svg";
-import { color, font, radius, risk } from "../../theme/tokens";
+import { color, font, radius, risk } from "../../theme/darkTokens";
 import { TIER_LABELS, tierForScore } from "../../lib/riskLevels";
 
 // Ring gauge for bot_percentage (0–100), colored by risk tier. Sizes scale
@@ -22,7 +22,7 @@ export default function ScoreGauge({ value, size = 180, strokeWidth = 12, captio
             cx={center}
             cy={center}
             r={r}
-            stroke={color.hairline}
+            stroke={color.border}
             strokeWidth={strokeWidth}
             fill="none"
           />
@@ -109,10 +109,10 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     borderRadius: radius.sm,
   },
-  // Square dots throughout — board pins, echoing the stamp chips.
   tierDot: {
     width: 7,
     height: 7,
+    borderRadius: 3.5,
   },
   tierLabel: {
     fontFamily: font.sansBold,

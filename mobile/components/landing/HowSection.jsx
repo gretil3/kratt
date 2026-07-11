@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View } from "react-native";
 import SectionShell from "./SectionShell";
-import { color, font, type } from "../../theme/tokens";
+import GradientBlob from "../ui/GradientBlob";
+import { color, font, gradients, type } from "../../theme/darkTokens";
 
 const STEPS = [
   { title: "Copy a YouTube video link" },
@@ -25,6 +26,11 @@ export default function HowSection() {
             <View key={step.title} style={styles.stepRow}>
               <View style={styles.numberColumn}>
                 <View style={styles.numberChip}>
+                  <GradientBlob
+                    colors={gradients.brand}
+                    seed={index}
+                    style={StyleSheet.absoluteFill}
+                  />
                   <Text style={styles.numberText}>{index + 1}</Text>
                 </View>
                 {!isLast ? <View style={styles.connector} /> : null}
@@ -64,20 +70,20 @@ const styles = StyleSheet.create({
   numberChip: {
     width: 34,
     height: 34,
-    borderRadius: 4,
-    backgroundColor: color.mossTint,
+    borderRadius: 17,
+    overflow: "hidden",
     alignItems: "center",
     justifyContent: "center",
   },
   numberText: {
     fontFamily: font.monoBold,
     fontSize: 14,
-    color: color.moss,
+    color: "#FFFFFF",
   },
   connector: {
     flex: 1,
     width: 1,
-    backgroundColor: color.hairline,
+    backgroundColor: color.border,
     marginVertical: 4,
   },
   stepContent: {
@@ -92,7 +98,6 @@ const styles = StyleSheet.create({
   },
   stepBody: {
     ...type.body,
-    color: color.inkMuted,
     marginTop: 6,
   },
 });

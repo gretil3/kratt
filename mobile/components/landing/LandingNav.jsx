@@ -1,12 +1,7 @@
-import {
-  Pressable,
-  StyleSheet,
-  Text,
-  useWindowDimensions,
-  View,
-} from "react-native";
-import AppButton from "../ui/AppButton";
-import { color, font, hairline, layout } from "../../theme/tokens";
+import { Pressable, StyleSheet, Text, useWindowDimensions, View } from "react-native";
+import GradientBlob from "../ui/GradientBlob";
+import PillButton from "../ui/PillButton";
+import { color, font, gradients, layout, radius } from "../../theme/darkTokens";
 
 function NavLink({ label, onPress }) {
   return (
@@ -28,7 +23,11 @@ export default function LandingNav({ onNavigate, onTry }) {
     <View style={styles.bar}>
       <View style={styles.inner}>
         <View style={styles.logoRow}>
-          <View style={styles.logoMark} />
+          <GradientBlob
+            colors={gradients.brand}
+            radius={radius.sm}
+            style={styles.logoMark}
+          />
           <Text style={styles.logo}>Kratt</Text>
         </View>
 
@@ -43,7 +42,7 @@ export default function LandingNav({ onNavigate, onTry }) {
           </View>
         ) : null}
 
-        <AppButton size="sm" label="Try it now" onPress={onTry} />
+        <PillButton size="sm" label="Try it now" onPress={onTry} />
       </View>
     </View>
   );
@@ -51,9 +50,9 @@ export default function LandingNav({ onNavigate, onTry }) {
 
 const styles = StyleSheet.create({
   bar: {
-    backgroundColor: color.bg,
-    borderBottomWidth: hairline,
-    borderBottomColor: color.hairline,
+    backgroundColor: "rgba(8,8,11,0.88)",
+    borderBottomWidth: 1,
+    borderBottomColor: color.border,
     zIndex: 10,
   },
   inner: {
@@ -61,7 +60,7 @@ const styles = StyleSheet.create({
     maxWidth: layout.maxWidth,
     alignSelf: "center",
     paddingHorizontal: 24,
-    height: 60,
+    height: 64,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
@@ -70,16 +69,14 @@ const styles = StyleSheet.create({
   logoRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
+    gap: 10,
   },
-  // A single straw square: the smallest possible "assembled part".
   logoMark: {
-    width: 8,
-    height: 8,
-    backgroundColor: color.straw,
+    width: 26,
+    height: 26,
   },
   logo: {
-    fontFamily: font.slab,
+    fontFamily: font.display,
     fontSize: 21,
     color: color.ink,
   },
@@ -90,7 +87,7 @@ const styles = StyleSheet.create({
   link: {
     fontFamily: font.sans,
     fontSize: 14,
-    color: color.ink,
+    color: color.inkMuted,
   },
   linkPressed: {
     opacity: 0.6,

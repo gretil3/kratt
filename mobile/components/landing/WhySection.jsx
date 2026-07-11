@@ -1,41 +1,44 @@
-import {
-  StyleSheet,
-  Text,
-  useWindowDimensions,
-  View,
-} from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import SectionShell from "./SectionShell";
-import { color, hairline, layout, radius, type } from "../../theme/tokens";
+import GradientBlob from "../ui/GradientBlob";
+import { color, gradients, radius, type } from "../../theme/darkTokens";
 
-const CARDS = [
+const ITEMS = [
   {
     title: "Hard to spot by eye",
     body: "Bot-written comments increasingly mimic the way ordinary people write.",
+    gradient: gradients.copy_paste,
   },
   {
     title: "They shape public opinion",
     body: "Top comments are often read as the voice of the majority.",
+    gradient: gradients.low_effort,
   },
   {
     title: "A skill you can train",
     body: "Recognizing suspicious patterns is part of media literacy.",
+    gradient: gradients.genuine,
   },
 ];
 
 export default function WhySection() {
-  const { width } = useWindowDimensions();
-  const isWide = width >= layout.breakpoint;
-
   return (
     <SectionShell style={styles.section}>
       <Text style={type.monoLabel}>WHY IT MATTERS</Text>
       <Text style={[type.h2, styles.heading]}>Why this matters</Text>
 
-      <View style={[styles.cards, isWide && styles.cardsWide]}>
-        {CARDS.map((card) => (
-          <View key={card.title} style={[styles.card, isWide && styles.cardWide]}>
-            <Text style={styles.cardTitle}>{card.title}</Text>
-            <Text style={styles.cardBody}>{card.body}</Text>
+      <View style={styles.list}>
+        {ITEMS.map((item, index) => (
+          <View
+            key={item.title}
+            style={[styles.row, index === ITEMS.length - 1 && styles.rowLast]}
+          >
+            <GradientBlob colors={item.gradient} seed={index} radius={radius.sm} style={styles.icon} />
+            <View style={styles.rowText}>
+              <Text style={styles.rowTitle}>{item.title}</Text>
+              <Text style={styles.rowBody}>{item.body}</Text>
+            </View>
+            <Text style={styles.plus}>+</Text>
           </View>
         ))}
       </View>
@@ -51,29 +54,38 @@ const styles = StyleSheet.create({
     marginTop: 8,
     marginBottom: 28,
   },
-  cards: {
-    gap: 14,
+  list: {
+    borderTopWidth: 1,
+    borderTopColor: color.border,
   },
-  cardsWide: {
+  row: {
     flexDirection: "row",
+    alignItems: "center",
     gap: 16,
+    paddingVertical: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: color.border,
   },
-  card: {
-    backgroundColor: color.surface,
-    borderWidth: hairline,
-    borderColor: color.hairline,
-    borderRadius: radius.sm,
-    padding: 20,
+  rowLast: {
+    borderBottomWidth: 1,
   },
-  cardWide: {
+  icon: {
+    width: 40,
+    height: 40,
+  },
+  rowText: {
     flex: 1,
+    gap: 4,
   },
-  cardTitle: {
+  rowTitle: {
     ...type.h3,
-    marginBottom: 6,
   },
-  cardBody: {
+  rowBody: {
     ...type.body,
-    color: color.inkMuted,
+  },
+  plus: {
+    fontFamily: type.h3.fontFamily,
+    fontSize: 22,
+    color: color.inkFaint,
   },
 });

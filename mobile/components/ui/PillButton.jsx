@@ -1,7 +1,8 @@
+// Pill-shaped CTA button used across the app's dark theme.
 import { Pressable, StyleSheet, Text } from "react-native";
-import { color, font, radius } from "../../theme/tokens";
+import { color, font, radius } from "../../theme/darkTokens";
 
-export default function AppButton({
+export default function PillButton({
   label,
   onPress,
   variant = "primary",
@@ -35,27 +36,27 @@ export default function AppButton({
 
 const styles = StyleSheet.create({
   base: {
-    borderRadius: radius.md,
-    paddingVertical: 13,
-    paddingHorizontal: 24,
+    borderRadius: radius.pill,
+    paddingVertical: 14,
+    paddingHorizontal: 26,
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 1,
   },
   primary: {
-    backgroundColor: color.moss,
-    borderColor: color.moss,
+    backgroundColor: color.ink,
+    borderColor: color.ink,
   },
   secondary: {
     backgroundColor: "transparent",
-    borderColor: color.moss,
+    borderColor: color.border,
   },
   sm: {
-    paddingVertical: 7,
-    paddingHorizontal: 14,
+    paddingVertical: 9,
+    paddingHorizontal: 18,
   },
   pressed: {
-    opacity: 0.85,
+    opacity: 0.8,
   },
   label: {
     fontFamily: font.sansBold,
@@ -66,9 +67,9 @@ const styles = StyleSheet.create({
     fontSize: 13,
   },
   labelPrimary: {
-    color: color.onMoss,
+    color: color.onLight,
   },
   labelSecondary: {
-    color: color.moss,
+    color: color.ink,
   },
 });

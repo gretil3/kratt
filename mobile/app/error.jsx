@@ -2,8 +2,8 @@ import { StyleSheet, Text, View } from "react-native";
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useAnalysis } from "../context/AnalysisContext";
-import AppButton from "../components/ui/AppButton";
-import { color, font, radius, type } from "../theme/tokens";
+import PillButton from "../components/ui/PillButton";
+import { color, font, radius, risk, type } from "../theme/darkTokens";
 
 const ERROR_TITLES = {
   invalid_url: "That's not a valid link",
@@ -28,14 +28,14 @@ export default function ErrorScreen() {
 
   return (
     <View style={styles.container}>
-      <StatusBar style="dark" />
+      <StatusBar style="light" />
       <View style={styles.stamp}>
         <Text style={styles.stampText}>ERROR</Text>
       </View>
       <Text style={styles.title}>{title}</Text>
       <Text style={styles.message}>{message}</Text>
 
-      <AppButton
+      <PillButton
         label="Try again"
         onPress={() => {
           reset();
@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   stamp: {
-    backgroundColor: color.rustTint,
+    backgroundColor: risk.high.tint,
     borderRadius: radius.sm,
     paddingHorizontal: 10,
     paddingVertical: 4,
@@ -67,7 +67,7 @@ const styles = StyleSheet.create({
     fontFamily: font.monoBold,
     fontSize: 12,
     letterSpacing: 1.5,
-    color: color.rustInk,
+    color: risk.high.text,
   },
   title: {
     ...type.h2,
@@ -75,7 +75,6 @@ const styles = StyleSheet.create({
   },
   message: {
     ...type.body,
-    color: color.inkMuted,
     textAlign: "center",
     marginBottom: 24,
     maxWidth: 420,

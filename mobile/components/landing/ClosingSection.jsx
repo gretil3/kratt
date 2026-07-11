@@ -1,7 +1,8 @@
 import { StyleSheet, Text, View } from "react-native";
 import SectionShell from "./SectionShell";
-import AppButton from "../ui/AppButton";
-import { color, font, hairline, radius, type } from "../../theme/tokens";
+import PillButton from "../ui/PillButton";
+import GradientBlob from "../ui/GradientBlob";
+import { color, font, gradients, radius, type } from "../../theme/darkTokens";
 
 export default function ClosingSection({ onTry }) {
   return (
@@ -14,16 +15,23 @@ export default function ClosingSection({ onTry }) {
         </Text>
       </View>
 
-      <View style={styles.cta}>
-        <Text style={[type.h2, styles.ctaHeading]}>
-          Start reading comment sections more critically
-        </Text>
-        <AppButton label="Try Kratt now" onPress={onTry} />
+      <View style={styles.ctaPanel}>
+        <GradientBlob colors={gradients.brand} seed={1} style={StyleSheet.absoluteFill} />
+        <View style={styles.ctaOverlay} />
+        <View style={styles.ctaContent}>
+          <Text style={styles.ctaHeading}>
+            Ready to read comment sections more critically?
+          </Text>
+          <Text style={styles.ctaSub}>
+            Paste a link, get a breakdown — no sign-up needed.
+          </Text>
+          <PillButton label="Try Kratt now" onPress={onTry} />
+        </View>
       </View>
 
       <View style={styles.footer}>
         <View style={styles.footerBrand}>
-          <View style={styles.footerMark} />
+          <GradientBlob colors={gradients.brand} radius={4} style={styles.footerMark} />
           <Text style={styles.footerLogo}>Kratt</Text>
         </View>
         <Text style={styles.footerText}>UNESCO Youth Hackathon 2026</Text>
@@ -39,29 +47,51 @@ const styles = StyleSheet.create({
   },
   callout: {
     backgroundColor: color.surface,
-    borderWidth: hairline,
-    borderColor: color.hairline,
-    borderLeftWidth: 3,
-    borderLeftColor: color.straw,
-    borderRadius: radius.sm,
+    borderWidth: 1,
+    borderColor: color.border,
+    borderRadius: radius.md,
     padding: 20,
     maxWidth: 680,
+    marginBottom: 56,
   },
   calloutText: {
     ...type.body,
   },
-  cta: {
-    alignItems: "center",
+  ctaPanel: {
+    borderRadius: radius.lg,
+    overflow: "hidden",
     paddingVertical: 72,
-    gap: 24,
+    paddingHorizontal: 24,
+    alignItems: "center",
   },
-  ctaHeading: {
-    textAlign: "center",
+  ctaOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(8,8,11,0.35)",
+  },
+  ctaContent: {
+    alignItems: "center",
+    gap: 16,
     maxWidth: 560,
   },
+  ctaHeading: {
+    fontFamily: font.display,
+    fontSize: 30,
+    lineHeight: 36,
+    color: "#FFFFFF",
+    textAlign: "center",
+  },
+  ctaSub: {
+    fontFamily: font.sans,
+    fontSize: 16,
+    lineHeight: 24,
+    color: "rgba(255,255,255,0.82)",
+    textAlign: "center",
+    marginBottom: 8,
+  },
   footer: {
-    borderTopWidth: hairline,
-    borderTopColor: color.hairline,
+    borderTopWidth: 1,
+    borderTopColor: color.border,
+    marginTop: 40,
     paddingTop: 20,
     flexDirection: "row",
     flexWrap: "wrap",
@@ -72,15 +102,14 @@ const styles = StyleSheet.create({
   footerBrand: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 7,
+    gap: 8,
   },
   footerMark: {
-    width: 7,
-    height: 7,
-    backgroundColor: color.straw,
+    width: 16,
+    height: 16,
   },
   footerLogo: {
-    fontFamily: font.slab,
+    fontFamily: font.display,
     fontSize: 16,
     color: color.ink,
   },

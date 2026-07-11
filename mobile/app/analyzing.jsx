@@ -4,7 +4,8 @@ import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useAnalysis } from "../context/AnalysisContext";
 import { parseVideoId } from "../lib/youtube";
-import { color, type } from "../theme/tokens";
+import GradientBlob from "../components/ui/GradientBlob";
+import { color, gradients, type } from "../theme/darkTokens";
 
 const STATUS_MESSAGES = [
   "Pulling comments",
@@ -42,8 +43,11 @@ export default function AnalyzingScreen() {
 
   return (
     <View style={styles.container}>
-      <StatusBar style="dark" />
-      <ActivityIndicator size="large" color={color.moss} />
+      <StatusBar style="light" />
+      <View style={styles.glow}>
+        <GradientBlob colors={gradients.brand} style={StyleSheet.absoluteFill} />
+      </View>
+      <ActivityIndicator size="large" color="#FFFFFF" />
       <Text style={styles.status}>{STATUS_MESSAGES[statusIndex]}…</Text>
     </View>
   );
@@ -56,6 +60,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     gap: 16,
+  },
+  glow: {
+    position: "absolute",
+    width: 420,
+    height: 420,
+    borderRadius: 210,
+    overflow: "hidden",
+    opacity: 0.35,
   },
   status: {
     ...type.body,
