@@ -2,6 +2,7 @@ import { useRef } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import ConstellationBackground from "./ConstellationBackground";
 import LandingNav from "./LandingNav";
 import HeroSection from "./HeroSection";
 import WhySection from "./WhySection";
@@ -37,6 +38,7 @@ export default function LandingScreen() {
   return (
     <View style={styles.root}>
       <StatusBar style="light" />
+      <ConstellationBackground />
       <ScrollView
         ref={scrollRef}
         stickyHeaderIndices={[0]}
