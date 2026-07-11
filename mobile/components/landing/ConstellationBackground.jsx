@@ -5,8 +5,8 @@
 import { useEffect, useRef, useState } from "react";
 import { Platform, StyleSheet, View, useWindowDimensions } from "react-native";
 import Svg, { Circle, Line } from "react-native-svg";
+import { useTheme } from "../../context/ThemeContext";
 
-const PARTICLE_COLOR = "rgba(245,245,247,0.55)";
 const LINK_RGB = "124,92,255"; // violet
 const MOUSE_LINK_RGB = "47,230,200"; // teal
 const LINK_DISTANCE = 130;
@@ -30,6 +30,8 @@ function makeParticles(count, width, height) {
 
 export default function ConstellationBackground() {
   const { width, height } = useWindowDimensions();
+  const { color } = useTheme();
+  const particleColor = color.particle;
   const particlesRef = useRef([]);
   const mouseRef = useRef(null);
   const sizeRef = useRef({ width, height });
@@ -125,12 +127,12 @@ export default function ConstellationBackground() {
   }
 
   return (
-    <View style={StyleSheet.absoluteFill} pointerEvents="none">
+    <View style={[StyleSheet.absoluteFill, { pointerEvents: "none" }]}>
       <Svg width={width} height={height}>
         {links}
         {mouseLinks}
         {particles.map((p, i) => (
-          <Circle key={i} cx={p.x} cy={p.y} r={p.r} fill={PARTICLE_COLOR} />
+          <Circle key={i} cx={p.x} cy={p.y} r={p.r} fill={particleColor} />
         ))}
         {mouse ? (
           <Circle cx={mouse.x} cy={mouse.y} r={3} fill={`rgba(${MOUSE_LINK_RGB},0.9)`} />

@@ -1,11 +1,11 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 import { useRouter } from "expo-router";
-import { StatusBar } from "expo-status-bar";
 import { useAnalysis } from "../context/AnalysisContext";
+import { useTheme } from "../context/ThemeContext";
 import { parseVideoId } from "../lib/youtube";
 import GradientBlob from "../components/ui/GradientBlob";
-import { color, gradients, type } from "../theme/darkTokens";
+import ThemedStatusBar from "../components/ui/ThemedStatusBar";
 
 const STATUS_MESSAGES = [
   "Pulling comments",
@@ -16,6 +16,8 @@ const STATUS_INTERVAL_MS = 1100;
 
 export default function AnalyzingScreen() {
   const router = useRouter();
+  const theme = useTheme();
+  const styles = useMemo(() => makeStyles(theme), [theme]);
   const { videoUrl, runAnalysis } = useAnalysis();
   const [statusIndex, setStatusIndex] = useState(0);
   const hasStarted = useRef(false);
@@ -43,34 +45,37 @@ export default function AnalyzingScreen() {
 
   return (
     <View style={styles.container}>
-      <StatusBar style="light" />
+      <ThemedStatusBar />
       <View style={styles.glow}>
-        <GradientBlob colors={gradients.brand} style={StyleSheet.absoluteFill} />
+        <GradientBlob colors={theme.gradients.brand} style={StyleSheet.absoluteFill} />
       </View>
-      <ActivityIndicator size="large" color="#FFFFFF" />
+      <ActivityIndicator size="large" color={theme.color.ink} />
       <Text style={styles.status}>{STATUS_MESSAGES[statusIndex]}…</Text>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: color.bg,
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 16,
-  },
-  glow: {
-    position: "absolute",
-    width: 420,
-    height: 420,
-    borderRadius: 210,
-    overflow: "hidden",
-    opacity: 0.35,
-  },
-  status: {
-    ...type.body,
-    color: color.inkMuted,
-  },
-});
+function makeStyles(theme) {
+  const { color, type } = theme;
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: color.bg,
+      alignItems: "center",
+      justifyContent: "center",
+      gap: 16,
+    },
+    glow: {
+      position: "absolute",
+      width: 420,
+      height: 420,
+      borderRadius: 210,
+      overflow: "hidden",
+      opacity: 0.35,
+    },
+    status: {
+      ...type.body,
+      color: color.inkMuted,
+    },
+  });
+}

@@ -1,9 +1,11 @@
+import { useMemo } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { useRouter } from "expo-router";
-import { StatusBar } from "expo-status-bar";
 import { useAnalysis } from "../context/AnalysisContext";
+import { useTheme } from "../context/ThemeContext";
 import PillButton from "../components/ui/PillButton";
-import { color, font, radius, risk, type } from "../theme/darkTokens";
+import ThemeToggle from "../components/ui/ThemeToggle";
+import ThemedStatusBar from "../components/ui/ThemedStatusBar";
 
 const ERROR_TITLES = {
   invalid_url: "That's not a valid link",
@@ -18,6 +20,8 @@ const FALLBACK_MESSAGE = "Please try again.";
 
 export default function ErrorScreen() {
   const router = useRouter();
+  const theme = useTheme();
+  const styles = useMemo(() => makeStyles(theme), [theme]);
   const { error, reset } = useAnalysis();
 
   const title = error
@@ -28,7 +32,8 @@ export default function ErrorScreen() {
 
   return (
     <View style={styles.container}>
-      <StatusBar style="light" />
+      <ThemedStatusBar />
+      <ThemeToggle style={styles.toggle} />
       <View style={styles.stamp}>
         <Text style={styles.stampText}>ERROR</Text>
       </View>
@@ -47,39 +52,47 @@ export default function ErrorScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: color.bg,
-    alignItems: "center",
-    justifyContent: "center",
-    paddingHorizontal: 32,
-    gap: 8,
-  },
-  stamp: {
-    backgroundColor: risk.high.tint,
-    borderRadius: radius.sm,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    marginBottom: 10,
-  },
-  stampText: {
-    fontFamily: font.monoBold,
-    fontSize: 12,
-    letterSpacing: 1.5,
-    color: risk.high.text,
-  },
-  title: {
-    ...type.h2,
-    textAlign: "center",
-  },
-  message: {
-    ...type.body,
-    textAlign: "center",
-    marginBottom: 24,
-    maxWidth: 420,
-  },
-  button: {
-    paddingHorizontal: 32,
-  },
-});
+function makeStyles(theme) {
+  const { color, font, radius, risk, type } = theme;
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: color.bg,
+      alignItems: "center",
+      justifyContent: "center",
+      paddingHorizontal: 32,
+      gap: 8,
+    },
+    toggle: {
+      position: "absolute",
+      top: 20,
+      right: 20,
+    },
+    stamp: {
+      backgroundColor: risk.high.tint,
+      borderRadius: radius.sm,
+      paddingHorizontal: 10,
+      paddingVertical: 4,
+      marginBottom: 10,
+    },
+    stampText: {
+      fontFamily: font.monoBold,
+      fontSize: 12,
+      letterSpacing: 1.5,
+      color: risk.high.text,
+    },
+    title: {
+      ...type.h2,
+      textAlign: "center",
+    },
+    message: {
+      ...type.body,
+      textAlign: "center",
+      marginBottom: 24,
+      maxWidth: 420,
+    },
+    button: {
+      paddingHorizontal: 32,
+    },
+  });
+}

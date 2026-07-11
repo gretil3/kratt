@@ -2,14 +2,17 @@
 // web (React Native Web renders plain DOM tags fine via createElement); on
 // native, no embeddable player is wired up yet, so it falls back to a
 // thumbnail + play button that opens the video in the browser/YouTube app.
-import { createElement } from "react";
+import { createElement, useMemo } from "react";
 import { Image, Linking, Platform, Pressable, StyleSheet, Text, View } from "react-native";
-import { color, font, radius } from "../../theme/darkTokens";
+import { useTheme } from "../../context/ThemeContext";
 
 // Placeholder walkthrough clip — swap for the real Kratt demo/trailer later.
 const DEMO_VIDEO_ID = "dQw4w9WgXcQ";
 
 export default function VideoFrame({ style }) {
+  const theme = useTheme();
+  const styles = useMemo(() => makeStyles(theme), [theme]);
+
   return (
     <View style={[styles.frame, style]}>
       <View style={styles.chrome}>
@@ -61,77 +64,80 @@ export default function VideoFrame({ style }) {
   );
 }
 
-const styles = StyleSheet.create({
-  frame: {
-    borderRadius: radius.lg,
-    borderWidth: 1,
-    borderColor: color.border,
-    backgroundColor: color.surface,
-    overflow: "hidden",
-  },
-  chrome: {
-    height: 40,
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 14,
-    gap: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: color.border,
-    backgroundColor: color.surfaceAlt,
-  },
-  dots: {
-    flexDirection: "row",
-    gap: 6,
-  },
-  dot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-  },
-  urlBar: {
-    flex: 1,
-    backgroundColor: color.bg,
-    borderRadius: radius.pill,
-    paddingHorizontal: 12,
-    paddingVertical: 5,
-    maxWidth: 180,
-  },
-  urlText: {
-    fontFamily: font.mono,
-    fontSize: 11,
-    color: color.inkMuted,
-  },
-  player: {
-    width: "100%",
-    aspectRatio: 16 / 9,
-    backgroundColor: "#000000",
-  },
-  nativeFallback: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 12,
-  },
-  scrim: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0,0,0,0.35)",
-  },
-  playButton: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: "rgba(255,255,255,0.92)",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  playIcon: {
-    fontSize: 20,
-    color: color.onLight,
-    marginLeft: 3,
-  },
-  nativeFallbackText: {
-    fontFamily: font.sansBold,
-    fontSize: 13,
-    color: "#FFFFFF",
-  },
-});
+function makeStyles(theme) {
+  const { color, font, radius } = theme;
+  return StyleSheet.create({
+    frame: {
+      borderRadius: radius.lg,
+      borderWidth: 1,
+      borderColor: color.border,
+      backgroundColor: color.surface,
+      overflow: "hidden",
+    },
+    chrome: {
+      height: 40,
+      flexDirection: "row",
+      alignItems: "center",
+      paddingHorizontal: 14,
+      gap: 12,
+      borderBottomWidth: 1,
+      borderBottomColor: color.border,
+      backgroundColor: color.surfaceAlt,
+    },
+    dots: {
+      flexDirection: "row",
+      gap: 6,
+    },
+    dot: {
+      width: 8,
+      height: 8,
+      borderRadius: 4,
+    },
+    urlBar: {
+      flex: 1,
+      backgroundColor: color.bg,
+      borderRadius: radius.pill,
+      paddingHorizontal: 12,
+      paddingVertical: 5,
+      maxWidth: 180,
+    },
+    urlText: {
+      fontFamily: font.mono,
+      fontSize: 11,
+      color: color.inkMuted,
+    },
+    player: {
+      width: "100%",
+      aspectRatio: 16 / 9,
+      backgroundColor: "#000000",
+    },
+    nativeFallback: {
+      flex: 1,
+      alignItems: "center",
+      justifyContent: "center",
+      gap: 12,
+    },
+    scrim: {
+      ...StyleSheet.absoluteFillObject,
+      backgroundColor: "rgba(0,0,0,0.35)",
+    },
+    playButton: {
+      width: 56,
+      height: 56,
+      borderRadius: 28,
+      backgroundColor: "rgba(255,255,255,0.92)",
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    playIcon: {
+      fontSize: 20,
+      color: "#0A0A0C",
+      marginLeft: 3,
+    },
+    nativeFallbackText: {
+      fontFamily: font.sansBold,
+      fontSize: 13,
+      color: "#FFFFFF",
+    },
+  });
+}

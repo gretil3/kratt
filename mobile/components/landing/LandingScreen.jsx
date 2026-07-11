@@ -1,7 +1,8 @@
 import { useRef } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { useRouter } from "expo-router";
-import { StatusBar } from "expo-status-bar";
+import { useTheme } from "../../context/ThemeContext";
+import ThemedStatusBar from "../ui/ThemedStatusBar";
 import ConstellationBackground from "./ConstellationBackground";
 import LandingNav from "./LandingNav";
 import HeroSection from "./HeroSection";
@@ -9,13 +10,13 @@ import WhySection from "./WhySection";
 import ResearchSection from "./ResearchSection";
 import HowSection from "./HowSection";
 import ClosingSection from "./ClosingSection";
-import { color } from "../../theme/darkTokens";
 
 // Room the sticky nav (64) plus breathing space takes above an anchored section.
 const ANCHOR_OFFSET = 80;
 
 export default function LandingScreen() {
   const router = useRouter();
+  const { color } = useTheme();
   const scrollRef = useRef(null);
   const sectionOffsets = useRef({});
 
@@ -36,8 +37,8 @@ export default function LandingScreen() {
   };
 
   return (
-    <View style={styles.root}>
-      <StatusBar style="light" />
+    <View style={[styles.root, { backgroundColor: color.bg }]}>
+      <ThemedStatusBar />
       <ConstellationBackground />
       <ScrollView
         ref={scrollRef}
@@ -71,7 +72,6 @@ export default function LandingScreen() {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: color.bg,
   },
   content: {
     paddingBottom: 24,

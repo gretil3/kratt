@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import {
   ScrollView,
   StyleSheet,
@@ -11,15 +11,17 @@ import {
   useRootNavigationState,
   useRouter,
 } from "expo-router";
-import { StatusBar } from "expo-status-bar";
 import { useAnalysis } from "../../context/AnalysisContext";
+import { useTheme } from "../../context/ThemeContext";
 import PillButton from "../../components/ui/PillButton";
 import CategoryCard from "../../components/ui/CategoryCard";
 import ScoreGauge from "../../components/ui/ScoreGauge";
+import ThemeToggle from "../../components/ui/ThemeToggle";
+import ThemedStatusBar from "../../components/ui/ThemedStatusBar";
 import { CATEGORIES } from "../../lib/categories";
 import { levelForShare } from "../../lib/riskLevels";
 import { canonicalUrl, parseVideoId } from "../../lib/youtube";
-import { color, font, radius, type } from "../../theme/darkTokens";
+import { accent } from "../../theme/themes";
 
 /**
  * Response shape per docs/api-contract.md (`POST /analyze`):
@@ -32,6 +34,8 @@ import { color, font, radius, type } from "../../theme/darkTokens";
 
 export default function AnalysisScreen() {
   const router = useRouter();
+  const theme = useTheme();
+  const styles = useMemo(() => makeStyles(theme), [theme]);
   const { videoId } = useLocalSearchParams();
   const { videoUrl, setVideoUrl, result, reset } = useAnalysis();
   const { width } = useWindowDimensions();
@@ -78,9 +82,12 @@ export default function AnalysisScreen() {
 
   return (
     <ScrollView style={styles.screen} contentContainerStyle={styles.scroll}>
-      <StatusBar style="light" />
+      <ThemedStatusBar />
       <View style={styles.content}>
-        <Text style={type.monoLabel}>ANALYSIS RESULT</Text>
+        <View style={styles.headerRow}>
+          <Text style={theme.type.monoLabel}>ANALYSIS RESULT</Text>
+          <ThemeToggle />
+        </View>
         {/* The contract has no videoTitle, so the canonical URL is the header. */}
         <Text style={styles.sourceUrl}>{canonicalUrl(videoId)}</Text>
 
@@ -94,7 +101,7 @@ export default function AnalysisScreen() {
           </Text>
         </View>
 
-        <Text style={[type.monoLabel, styles.sectionLabel]}>
+        <Text style={[theme.type.monoLabel, styles.sectionLabel]}>
           EVIDENCE CATEGORIES
         </Text>
         <View style={styles.grid}>
@@ -121,7 +128,7 @@ export default function AnalysisScreen() {
 
         {sample_flagged_comments.length > 0 ? (
           <>
-            <Text style={[type.monoLabel, styles.sectionLabel]}>
+            <Text style={[theme.type.monoLabel, styles.sectionLabel]}>
               FLAGGED COMMENT EXAMPLES
             </Text>
             <View style={styles.flaggedList}>
@@ -152,84 +159,92 @@ export default function AnalysisScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-    backgroundColor: color.bg,
-  },
-  scroll: {
-    padding: 24,
-    paddingBottom: 48,
-  },
-  content: {
-    width: "100%",
-    maxWidth: 720,
-    alignSelf: "center",
-  },
-  sourceUrl: {
-    fontFamily: font.mono,
-    fontSize: 14,
-    lineHeight: 20,
-    color: color.ink,
-    marginTop: 8,
-  },
-  divider: {
-    height: 1,
-    backgroundColor: color.border,
-    marginTop: 20,
-    marginBottom: 28,
-  },
-  gaugeBlock: {
-    alignItems: "center",
-    marginBottom: 36,
-  },
-  gaugeFootnote: {
-    ...type.small,
-    marginTop: 14,
-    textAlign: "center",
-  },
-  sectionLabel: {
-    marginBottom: 12,
-  },
-  grid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 12,
-    marginBottom: 32,
-  },
-  cell: {
-    flexGrow: 1,
-  },
-  flaggedList: {
-    gap: 10,
-    marginBottom: 28,
-  },
-  flaggedRow: {
-    flexDirection: "row",
-    gap: 12,
-    backgroundColor: color.surface,
-    borderWidth: 1,
-    borderColor: color.border,
-    borderLeftWidth: 2,
-    borderLeftColor: "#7C5CFF",
-    borderRadius: radius.sm,
-    padding: 14,
-  },
-  flaggedIndex: {
-    fontFamily: font.monoBold,
-    fontSize: 12,
-    lineHeight: 21,
-    color: "#7C5CFF",
-  },
-  flaggedText: {
-    ...type.body,
-    flex: 1,
-  },
-  footnote: {
-    ...type.small,
-    marginBottom: 24,
-  },
-  button: {
-    alignSelf: "flex-start",
-  },
-});
+function makeStyles(theme) {
+  const { color, font, radius, type } = theme;
+  return StyleSheet.create({
+    screen: {
+      flex: 1,
+      backgroundColor: color.bg,
+    },
+    scroll: {
+      padding: 24,
+      paddingBottom: 48,
+    },
+    content: {
+      width: "100%",
+      maxWidth: 720,
+      alignSelf: "center",
+    },
+    headerRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+    },
+    sourceUrl: {
+      fontFamily: font.mono,
+      fontSize: 14,
+      lineHeight: 20,
+      color: color.ink,
+      marginTop: 8,
+    },
+    divider: {
+      height: 1,
+      backgroundColor: color.border,
+      marginTop: 20,
+      marginBottom: 28,
+    },
+    gaugeBlock: {
+      alignItems: "center",
+      marginBottom: 36,
+    },
+    gaugeFootnote: {
+      ...type.small,
+      marginTop: 14,
+      textAlign: "center",
+    },
+    sectionLabel: {
+      marginBottom: 12,
+    },
+    grid: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      gap: 12,
+      marginBottom: 32,
+    },
+    cell: {
+      flexGrow: 1,
+    },
+    flaggedList: {
+      gap: 10,
+      marginBottom: 28,
+    },
+    flaggedRow: {
+      flexDirection: "row",
+      gap: 12,
+      backgroundColor: color.surface,
+      borderWidth: 1,
+      borderColor: color.border,
+      borderLeftWidth: 2,
+      borderLeftColor: accent.violet,
+      borderRadius: radius.sm,
+      padding: 14,
+    },
+    flaggedIndex: {
+      fontFamily: font.monoBold,
+      fontSize: 12,
+      lineHeight: 21,
+      color: accent.violet,
+    },
+    flaggedText: {
+      ...type.body,
+      flex: 1,
+    },
+    footnote: {
+      ...type.small,
+      marginBottom: 24,
+    },
+    button: {
+      alignSelf: "flex-start",
+    },
+  });
+}

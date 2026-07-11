@@ -1,17 +1,20 @@
+import { useMemo } from "react";
 import { StyleSheet, Text, useWindowDimensions, View } from "react-native";
+import { useTheme } from "../../context/ThemeContext";
 import SectionShell from "./SectionShell";
 import CategoryCard from "../ui/CategoryCard";
 import { CATEGORIES } from "../../lib/categories";
-import { layout, type } from "../../theme/darkTokens";
 
 export default function ResearchSection() {
+  const theme = useTheme();
+  const styles = useMemo(() => makeStyles(theme), [theme]);
   const { width } = useWindowDimensions();
-  const isWide = width >= layout.breakpoint;
+  const isWide = width >= theme.layout.breakpoint;
 
   return (
     <SectionShell style={styles.section}>
-      <Text style={type.monoLabel}>EVIDENCE CATEGORIES</Text>
-      <Text style={[type.h2, styles.heading]}>
+      <Text style={theme.type.monoLabel}>EVIDENCE CATEGORIES</Text>
+      <Text style={[theme.type.h2, styles.heading]}>
         The four categories Kratt reads
       </Text>
       <Text style={styles.paragraph}>
@@ -40,25 +43,28 @@ export default function ResearchSection() {
   );
 }
 
-const styles = StyleSheet.create({
-  section: {
-    paddingVertical: 56,
-  },
-  heading: {
-    marginTop: 8,
-    marginBottom: 14,
-  },
-  paragraph: {
-    ...type.body,
-    maxWidth: 680,
-    marginBottom: 28,
-  },
-  grid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 16,
-  },
-  cell: {
-    flexGrow: 1,
-  },
-});
+function makeStyles(theme) {
+  const { type } = theme;
+  return StyleSheet.create({
+    section: {
+      paddingVertical: 56,
+    },
+    heading: {
+      marginTop: 8,
+      marginBottom: 14,
+    },
+    paragraph: {
+      ...type.body,
+      maxWidth: 680,
+      marginBottom: 28,
+    },
+    grid: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      gap: 16,
+    },
+    cell: {
+      flexGrow: 1,
+    },
+  });
+}

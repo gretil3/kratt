@@ -1,7 +1,8 @@
+import { useMemo } from "react";
 import { StyleSheet, Text, View } from "react-native";
+import { useTheme } from "../../context/ThemeContext";
 import SectionShell from "./SectionShell";
 import GradientBlob from "../ui/GradientBlob";
-import { color, font, gradients, type } from "../../theme/darkTokens";
 
 const STEPS = [
   { title: "Copy a YouTube video link" },
@@ -14,10 +15,13 @@ const STEPS = [
 ];
 
 export default function HowSection() {
+  const theme = useTheme();
+  const styles = useMemo(() => makeStyles(theme), [theme]);
+
   return (
     <SectionShell style={styles.section}>
-      <Text style={type.monoLabel}>HOW IT WORKS</Text>
-      <Text style={[type.h2, styles.heading]}>How to use Kratt</Text>
+      <Text style={theme.type.monoLabel}>HOW IT WORKS</Text>
+      <Text style={[theme.type.h2, styles.heading]}>How to use Kratt</Text>
 
       <View style={styles.steps}>
         {STEPS.map((step, index) => {
@@ -27,7 +31,7 @@ export default function HowSection() {
               <View style={styles.numberColumn}>
                 <View style={styles.numberChip}>
                   <GradientBlob
-                    colors={gradients.brand}
+                    colors={theme.gradients.brand}
                     seed={index}
                     style={StyleSheet.absoluteFill}
                   />
@@ -49,55 +53,58 @@ export default function HowSection() {
   );
 }
 
-const styles = StyleSheet.create({
-  section: {
-    paddingVertical: 56,
-  },
-  heading: {
-    marginTop: 8,
-    marginBottom: 28,
-  },
-  steps: {
-    maxWidth: 560,
-  },
-  stepRow: {
-    flexDirection: "row",
-    gap: 16,
-  },
-  numberColumn: {
-    alignItems: "center",
-  },
-  numberChip: {
-    width: 34,
-    height: 34,
-    borderRadius: 17,
-    overflow: "hidden",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  numberText: {
-    fontFamily: font.monoBold,
-    fontSize: 14,
-    color: "#FFFFFF",
-  },
-  connector: {
-    flex: 1,
-    width: 1,
-    backgroundColor: color.border,
-    marginVertical: 4,
-  },
-  stepContent: {
-    flex: 1,
-    paddingTop: 6,
-  },
-  stepGap: {
-    paddingBottom: 30,
-  },
-  stepTitle: {
-    ...type.h3,
-  },
-  stepBody: {
-    ...type.body,
-    marginTop: 6,
-  },
-});
+function makeStyles(theme) {
+  const { color, font, type } = theme;
+  return StyleSheet.create({
+    section: {
+      paddingVertical: 56,
+    },
+    heading: {
+      marginTop: 8,
+      marginBottom: 28,
+    },
+    steps: {
+      maxWidth: 560,
+    },
+    stepRow: {
+      flexDirection: "row",
+      gap: 16,
+    },
+    numberColumn: {
+      alignItems: "center",
+    },
+    numberChip: {
+      width: 34,
+      height: 34,
+      borderRadius: 17,
+      overflow: "hidden",
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    numberText: {
+      fontFamily: font.monoBold,
+      fontSize: 14,
+      color: "#FFFFFF",
+    },
+    connector: {
+      flex: 1,
+      width: 1,
+      backgroundColor: color.border,
+      marginVertical: 4,
+    },
+    stepContent: {
+      flex: 1,
+      paddingTop: 6,
+    },
+    stepGap: {
+      paddingBottom: 30,
+    },
+    stepTitle: {
+      ...type.h3,
+    },
+    stepBody: {
+      ...type.body,
+      marginTop: 6,
+    },
+  });
+}

@@ -1,12 +1,16 @@
+import { useMemo } from "react";
 import { StyleSheet, Text, useWindowDimensions, View } from "react-native";
+import { useTheme } from "../../context/ThemeContext";
 import SectionShell from "./SectionShell";
 import PillButton from "../ui/PillButton";
 import VideoFrame from "./VideoFrame";
-import { color, font, layout, radius, type } from "../../theme/darkTokens";
+import { accent } from "../../theme/themes";
 
 export default function HeroSection({ onAnalyze, onSeeHow }) {
+  const theme = useTheme();
+  const styles = useMemo(() => makeStyles(theme), [theme]);
   const { width } = useWindowDimensions();
-  const isWide = width >= layout.breakpoint;
+  const isWide = width >= theme.layout.breakpoint;
 
   return (
     <SectionShell style={styles.section}>
@@ -19,12 +23,12 @@ export default function HeroSection({ onAnalyze, onSeeHow }) {
 
           <Text
             style={[
-              type.display,
+              theme.type.display,
               styles.headline,
               isWide && { fontSize: 48, lineHeight: 54 },
             ]}
           >
-            Kratt reads comment so bots can't hide
+            Kratt reads comment so bots can&apos;t hide
           </Text>
 
           <Text style={styles.subhead}>
@@ -53,98 +57,101 @@ export default function HeroSection({ onAnalyze, onSeeHow }) {
   );
 }
 
-const styles = StyleSheet.create({
-  section: {
-    paddingTop: 48,
-    paddingBottom: 56,
-  },
-  row: {
-    gap: 40,
-  },
-  rowWide: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  copy: {},
-  copyWide: {
-    flex: 1,
-    maxWidth: 520,
-  },
-  badge: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    alignSelf: "flex-start",
-    borderWidth: 1,
-    borderColor: color.border,
-    backgroundColor: color.surface,
-    borderRadius: radius.pill,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    marginBottom: 24,
-  },
-  badgeDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: "#2FE6C8",
-  },
-  badgeText: {
-    fontFamily: font.monoBold,
-    fontSize: 11,
-    letterSpacing: 1.2,
-    color: color.inkMuted,
-  },
-  headline: {
-    marginBottom: 18,
-  },
-  subhead: {
-    ...type.bodyLarge,
-    maxWidth: 480,
-    marginBottom: 28,
-  },
-  buttons: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 12,
-  },
-  mediaWrap: {
-    position: "relative",
-  },
-  mediaWrapWide: {
-    flex: 1,
-  },
-  media: {
-    zIndex: 1,
-  },
-  accentDot1: {
-    position: "absolute",
-    top: -18,
-    right: 24,
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: "#2FE6C8",
-    opacity: 0.7,
-  },
-  accentDot2: {
-    position: "absolute",
-    bottom: 40,
-    left: -14,
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: "#FF3EA5",
-    opacity: 0.6,
-  },
-  accentDot3: {
-    position: "absolute",
-    bottom: -16,
-    right: "30%",
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: "#7C5CFF",
-    opacity: 0.7,
-  },
-});
+function makeStyles(theme) {
+  const { color, font, radius, type } = theme;
+  return StyleSheet.create({
+    section: {
+      paddingTop: 48,
+      paddingBottom: 56,
+    },
+    row: {
+      gap: 40,
+    },
+    rowWide: {
+      flexDirection: "row",
+      alignItems: "center",
+    },
+    copy: {},
+    copyWide: {
+      flex: 1,
+      maxWidth: 520,
+    },
+    badge: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 8,
+      alignSelf: "flex-start",
+      borderWidth: 1,
+      borderColor: color.border,
+      backgroundColor: color.surface,
+      borderRadius: radius.pill,
+      paddingHorizontal: 12,
+      paddingVertical: 6,
+      marginBottom: 24,
+    },
+    badgeDot: {
+      width: 6,
+      height: 6,
+      borderRadius: 3,
+      backgroundColor: accent.teal,
+    },
+    badgeText: {
+      fontFamily: font.monoBold,
+      fontSize: 11,
+      letterSpacing: 1.2,
+      color: color.inkMuted,
+    },
+    headline: {
+      marginBottom: 18,
+    },
+    subhead: {
+      ...type.bodyLarge,
+      maxWidth: 480,
+      marginBottom: 28,
+    },
+    buttons: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      gap: 12,
+    },
+    mediaWrap: {
+      position: "relative",
+    },
+    mediaWrapWide: {
+      flex: 1,
+    },
+    media: {
+      zIndex: 1,
+    },
+    accentDot1: {
+      position: "absolute",
+      top: -18,
+      right: 24,
+      width: 10,
+      height: 10,
+      borderRadius: 5,
+      backgroundColor: accent.teal,
+      opacity: 0.7,
+    },
+    accentDot2: {
+      position: "absolute",
+      bottom: 40,
+      left: -14,
+      width: 8,
+      height: 8,
+      borderRadius: 4,
+      backgroundColor: accent.pink,
+      opacity: 0.6,
+    },
+    accentDot3: {
+      position: "absolute",
+      bottom: -16,
+      right: "30%",
+      width: 6,
+      height: 6,
+      borderRadius: 3,
+      backgroundColor: accent.violet,
+      opacity: 0.7,
+    },
+  });
+}

@@ -1,12 +1,16 @@
+import { useMemo } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import Svg, { Circle } from "react-native-svg";
-import { color, font, radius, risk } from "../../theme/darkTokens";
+import { useTheme } from "../../context/ThemeContext";
 import { TIER_LABELS, tierForScore } from "../../lib/riskLevels";
 
 // Ring gauge for bot_percentage (0–100), colored by risk tier. Sizes scale
 // from the `size` prop so the same component works on the result screen and
 // in denser contexts (e.g. a future history list).
 export default function ScoreGauge({ value, size = 180, strokeWidth = 12, caption = "likely bot activity" }) {
+  const theme = useTheme();
+  const styles = useMemo(() => makeStyles(theme), [theme]);
+  const { color, risk } = theme;
   const clamped = Math.max(0, Math.min(100, value));
   const tier = tierForScore(clamped);
   const palette = risk[tier];
@@ -74,48 +78,51 @@ export default function ScoreGauge({ value, size = 180, strokeWidth = 12, captio
   );
 }
 
-const styles = StyleSheet.create({
-  wrap: {
-    alignItems: "center",
-  },
-  center: {
-    ...StyleSheet.absoluteFillObject,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  valueRow: {
-    flexDirection: "row",
-    alignItems: "flex-end",
-  },
-  value: {
-    fontFamily: font.monoBold,
-  },
-  percentSign: {
-    fontFamily: font.monoBold,
-    marginBottom: 4,
-  },
-  caption: {
-    fontFamily: font.sans,
-    fontSize: 12,
-    color: color.inkMuted,
-    marginTop: 2,
-  },
-  tierChip: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 7,
-    marginTop: 14,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: radius.sm,
-  },
-  tierDot: {
-    width: 7,
-    height: 7,
-    borderRadius: 3.5,
-  },
-  tierLabel: {
-    fontFamily: font.sansBold,
-    fontSize: 13,
-  },
-});
+function makeStyles(theme) {
+  const { color, font, radius } = theme;
+  return StyleSheet.create({
+    wrap: {
+      alignItems: "center",
+    },
+    center: {
+      ...StyleSheet.absoluteFillObject,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    valueRow: {
+      flexDirection: "row",
+      alignItems: "flex-end",
+    },
+    value: {
+      fontFamily: font.monoBold,
+    },
+    percentSign: {
+      fontFamily: font.monoBold,
+      marginBottom: 4,
+    },
+    caption: {
+      fontFamily: font.sans,
+      fontSize: 12,
+      color: color.inkMuted,
+      marginTop: 2,
+    },
+    tierChip: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 7,
+      marginTop: 14,
+      paddingHorizontal: 10,
+      paddingVertical: 4,
+      borderRadius: radius.sm,
+    },
+    tierDot: {
+      width: 7,
+      height: 7,
+      borderRadius: 3.5,
+    },
+    tierLabel: {
+      fontFamily: font.sansBold,
+      fontSize: 13,
+    },
+  });
+}

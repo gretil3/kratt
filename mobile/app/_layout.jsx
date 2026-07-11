@@ -13,7 +13,19 @@ import {
   SpaceMono_700Bold,
 } from "@expo-google-fonts/space-mono";
 import { AnalysisProvider } from "../context/AnalysisContext";
-import { color } from "../theme/darkTokens";
+import { ThemeProvider, useTheme } from "../context/ThemeContext";
+
+function RootNavigator() {
+  const { color } = useTheme();
+  return (
+    <Stack
+      screenOptions={{
+        headerShown: false,
+        contentStyle: { backgroundColor: color.bg },
+      }}
+    />
+  );
+}
 
 export default function RootLayout() {
   const [fontsLoaded, fontError] = useFonts({
@@ -32,13 +44,10 @@ export default function RootLayout() {
   }
 
   return (
-    <AnalysisProvider>
-      <Stack
-        screenOptions={{
-          headerShown: false,
-          contentStyle: { backgroundColor: color.bg },
-        }}
-      />
-    </AnalysisProvider>
+    <ThemeProvider>
+      <AnalysisProvider>
+        <RootNavigator />
+      </AnalysisProvider>
+    </ThemeProvider>
   );
 }

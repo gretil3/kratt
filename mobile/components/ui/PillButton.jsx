@@ -1,6 +1,7 @@
-// Pill-shaped CTA button used across the app's dark theme.
+// Pill-shaped CTA button, theme-aware via useTheme.
+import { useMemo } from "react";
 import { Pressable, StyleSheet, Text } from "react-native";
-import { color, font, radius } from "../../theme/darkTokens";
+import { useTheme } from "../../context/ThemeContext";
 
 export default function PillButton({
   label,
@@ -9,6 +10,9 @@ export default function PillButton({
   size = "md",
   style,
 }) {
+  const theme = useTheme();
+  const styles = useMemo(() => makeStyles(theme), [theme]);
+
   return (
     <Pressable
       accessibilityRole="button"
@@ -34,42 +38,45 @@ export default function PillButton({
   );
 }
 
-const styles = StyleSheet.create({
-  base: {
-    borderRadius: radius.pill,
-    paddingVertical: 14,
-    paddingHorizontal: 26,
-    alignItems: "center",
-    justifyContent: "center",
-    borderWidth: 1,
-  },
-  primary: {
-    backgroundColor: color.ink,
-    borderColor: color.ink,
-  },
-  secondary: {
-    backgroundColor: "transparent",
-    borderColor: color.border,
-  },
-  sm: {
-    paddingVertical: 9,
-    paddingHorizontal: 18,
-  },
-  pressed: {
-    opacity: 0.8,
-  },
-  label: {
-    fontFamily: font.sansBold,
-    fontSize: 15,
-    letterSpacing: 0.2,
-  },
-  labelSm: {
-    fontSize: 13,
-  },
-  labelPrimary: {
-    color: color.onLight,
-  },
-  labelSecondary: {
-    color: color.ink,
-  },
-});
+function makeStyles(theme) {
+  const { color, font, radius } = theme;
+  return StyleSheet.create({
+    base: {
+      borderRadius: radius.pill,
+      paddingVertical: 14,
+      paddingHorizontal: 26,
+      alignItems: "center",
+      justifyContent: "center",
+      borderWidth: 1,
+    },
+    primary: {
+      backgroundColor: color.ink,
+      borderColor: color.ink,
+    },
+    secondary: {
+      backgroundColor: "transparent",
+      borderColor: color.border,
+    },
+    sm: {
+      paddingVertical: 9,
+      paddingHorizontal: 18,
+    },
+    pressed: {
+      opacity: 0.8,
+    },
+    label: {
+      fontFamily: font.sansBold,
+      fontSize: 15,
+      letterSpacing: 0.2,
+    },
+    labelSm: {
+      fontSize: 13,
+    },
+    labelPrimary: {
+      color: color.onLight,
+    },
+    labelSecondary: {
+      color: color.ink,
+    },
+  });
+}

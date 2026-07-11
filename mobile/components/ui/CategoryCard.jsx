@@ -1,6 +1,7 @@
+import { useMemo } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import GradientBlob from "./GradientBlob";
-import { color, font, gradients, radius, risk, type } from "../../theme/darkTokens";
+import { useTheme } from "../../context/ThemeContext";
 import { LEVEL_LABELS } from "../../lib/riskLevels";
 
 // One comment category, shown two ways from the same component:
@@ -18,7 +19,9 @@ export default function CategoryCard({
   level,
   style,
 }) {
-  const palette = level ? risk[level] : null;
+  const theme = useTheme();
+  const styles = useMemo(() => makeStyles(theme), [theme]);
+  const palette = level ? theme.risk[level] : null;
   const showData = typeof percent === "number";
 
   return (
@@ -26,7 +29,7 @@ export default function CategoryCard({
       <View style={styles.topRow}>
         <View style={styles.stampChip}>
           <GradientBlob
-            colors={gradients[categoryKey] ?? gradients.brand}
+            colors={theme.gradients[categoryKey] ?? theme.gradients.brand}
             seed={seed}
             style={StyleSheet.absoluteFill}
           />
@@ -50,59 +53,62 @@ export default function CategoryCard({
   );
 }
 
-const styles = StyleSheet.create({
-  card: {
-    backgroundColor: color.surface,
-    borderWidth: 1,
-    borderColor: color.border,
-    borderRadius: radius.md,
-    padding: 16,
-  },
-  topRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 12,
-  },
-  stampChip: {
-    alignSelf: "flex-start",
-    overflow: "hidden",
-    borderRadius: radius.sm,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-  },
-  stampText: {
-    fontFamily: font.monoBold,
-    fontSize: 11,
-    letterSpacing: 1,
-    color: "#FFFFFF",
-  },
-  percent: {
-    fontFamily: font.monoBold,
-    fontSize: 21,
-    color: color.ink,
-  },
-  label: {
-    ...type.h3,
-    marginBottom: 4,
-  },
-  description: {
-    ...type.small,
-  },
-  levelRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 7,
-    marginTop: "auto",
-    paddingTop: 14,
-  },
-  levelDot: {
-    width: 7,
-    height: 7,
-    borderRadius: 3.5,
-  },
-  levelText: {
-    fontFamily: font.sansBold,
-    fontSize: 13,
-  },
-});
+function makeStyles(theme) {
+  const { color, font, radius, type } = theme;
+  return StyleSheet.create({
+    card: {
+      backgroundColor: color.surface,
+      borderWidth: 1,
+      borderColor: color.border,
+      borderRadius: radius.md,
+      padding: 16,
+    },
+    topRow: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      marginBottom: 12,
+    },
+    stampChip: {
+      alignSelf: "flex-start",
+      overflow: "hidden",
+      borderRadius: radius.sm,
+      paddingHorizontal: 10,
+      paddingVertical: 5,
+    },
+    stampText: {
+      fontFamily: font.monoBold,
+      fontSize: 11,
+      letterSpacing: 1,
+      color: "#FFFFFF",
+    },
+    percent: {
+      fontFamily: font.monoBold,
+      fontSize: 21,
+      color: color.ink,
+    },
+    label: {
+      ...type.h3,
+      marginBottom: 4,
+    },
+    description: {
+      ...type.small,
+    },
+    levelRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 7,
+      marginTop: "auto",
+      paddingTop: 14,
+    },
+    levelDot: {
+      width: 7,
+      height: 7,
+      borderRadius: 3.5,
+    },
+    levelText: {
+      fontFamily: font.sansBold,
+      fontSize: 13,
+    },
+  });
+}
