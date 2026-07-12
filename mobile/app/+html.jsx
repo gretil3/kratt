@@ -9,6 +9,12 @@ const DESCRIPTION =
   "is bot activity — shown with the evidence, so you learn to spot " +
   "manufactured consensus yourself.";
 
+// Absolute, not "/og-image.png": link-preview crawlers (WhatsApp, Discord,
+// Slack, X) fetch the image out of band and won't resolve a relative path.
+// Fill in the deployed origin once Vercel gives us one.
+const SITE_URL = "https://kratt.vercel.app"; // TODO: ganti ke domain final
+const OG_IMAGE = `${SITE_URL}/og-image.png`;
+
 export default function Root({ children }) {
   return (
     <html lang="en">
@@ -27,13 +33,15 @@ export default function Root({ children }) {
         <meta property="og:site_name" content="Kratt" />
         <meta property="og:title" content={TITLE} />
         <meta property="og:description" content={DESCRIPTION} />
-        {/* og:image intentionally omitted until a real share asset exists —
-            a broken image reference looks worse in link previews than none.
-            When one lands in public/, add:
-            <meta property="og:image" content="/og-image.png" /> */}
-        <meta name="twitter:card" content="summary" />
+        <meta property="og:image" content={OG_IMAGE} />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        {/* summary_large_image, not summary: the asset is 1200x630 (1.91:1),
+            made for the wide card — the small square card would crop it. */}
+        <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={TITLE} />
         <meta name="twitter:description" content={DESCRIPTION} />
+        <meta name="twitter:image" content={OG_IMAGE} />
 
         <ScrollViewStyleReset />
       </head>
