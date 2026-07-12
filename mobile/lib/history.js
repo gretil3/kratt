@@ -18,7 +18,11 @@ export async function getHistory() {
 /**
  * @param {{videoUrl: string, botPercentage: number, timestamp?: number}} entry
  */
-export async function appendHistoryEntry({ videoUrl, botPercentage, timestamp = Date.now() }) {
+export async function appendHistoryEntry({
+  videoUrl,
+  botPercentage,
+  timestamp = Date.now(),
+}) {
   const entries = await getHistory();
 
   const latest = entries[0];

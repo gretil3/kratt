@@ -8,37 +8,48 @@ import { useRouter } from "expo-router";
 import { useTheme } from "../context/ThemeContext";
 import PillButton from "../components/ui/PillButton";
 import GradientBlob from "../components/ui/GradientBlob";
+import OnboardingFigure from "../components/ui/OnboardingFigure";
 import ThemedStatusBar from "../components/ui/ThemedStatusBar";
 import { STORAGE_KEYS, setStored } from "../lib/storage";
 
+// Each card's `figure` draws its concept over the gradient blob. The
+// gradientKey mapping is load-bearing: these are the same four category
+// gradients the user meets again on the result screen — don't reshuffle.
 const CARDS = [
   {
     kicker: "MANUFACTURED CONSENSUS",
     title: "Agreement can be staged",
-    body:
-      "Astroturfing is the practice of using fake or coordinated accounts that pose as ordinary people, so one actor's message looks like a groundswell of independent voices. The “everyone agrees” you sense in a comment section may have been built on purpose.",
+    body: "Astroturfing is the practice of using fake or coordinated accounts that pose as ordinary people, so one actor's message looks like a groundswell of independent voices. The “everyone agrees” you sense in a comment section may have been built on purpose.",
     gradientKey: "brand",
+    figure: "consensus",
   },
   {
     kicker: "WHY IT WORKS",
     title: "We trust the crowd by default",
-    body:
-      "People lean on social proof: when a view looks like the majority opinion, we grant it extra credibility — usually without noticing. A comment section that reads as unanimous can shift what you believe, even when the crowd isn't real.",
+    body: "People lean on social proof: when a view looks like the majority opinion, we grant it extra credibility — usually without noticing. A comment section that reads as unanimous can shift what you believe, even when the crowd isn't real.",
     gradientKey: "copy_paste",
+    figure: "crowd",
   },
   {
     kicker: "THE SCALE",
     title: "This isn't a rare trick",
-    body:
-      "Researchers studying major social platforms have repeatedly found that a meaningful share of accounts and engagement is automated or coordinated — enough to tilt how popular an opinion appears. Comment sections are a cheap, high-visibility place to do it.",
+    // Figure verified against the paper's abstract (arxiv.org/abs/1703.03107):
+    // "between 9% and 15% of active Twitter accounts are bots." Scope it
+    // honestly — one platform, one year, accounts not comments.
+    body: "In 2017, researchers estimated that between 9% and 15% of active Twitter accounts were bots [1]. That's one platform in one year — not a claim about YouTube comments — but it puts the practice at a scale that can tilt how popular an opinion looks. Comment sections are a cheap, high-visibility place to spend that capacity.",
+    footnote: "[1] Varol et al., 2017 — in Sources on the landing page.",
     gradientKey: "low_effort",
+    figure: "stat",
+    stat: "9–15%",
+    statCaption:
+      "OF ACTIVE TWITTER ACCOUNTS ESTIMATED TO BE BOTS — VAROL ET AL., 2017 [1]",
   },
   {
     kicker: "WHERE KRATT FITS",
     title: "A trainer, not a judge",
-    body:
-      "Kratt doesn't hand down verdicts on videos. It shows you the evidence — how much of a comment section looks automated, and which patterns give it away — so you get better at spotting manufactured consensus on your own.",
+    body: "Kratt doesn't hand down verdicts on videos. It shows you the evidence — how much of a comment section looks automated, and which patterns give it away — so you get better at spotting manufactured consensus on your own.",
     gradientKey: "genuine",
+    figure: "magnifier",
   },
 ];
 
@@ -63,7 +74,8 @@ export default function OnboardingScreen() {
         <View style={styles.content}>
           <View style={styles.topRow}>
             <Text style={styles.progress}>
-              {String(index + 1).padStart(2, "0")} / {String(CARDS.length).padStart(2, "0")}
+              {String(index + 1).padStart(2, "0")} /{" "}
+              {String(CARDS.length).padStart(2, "0")}
             </Text>
             {!isLast && (
               <Pressable
@@ -77,16 +89,26 @@ export default function OnboardingScreen() {
             )}
           </View>
 
-          <GradientBlob
-            colors={theme.gradients[card.gradientKey]}
-            seed={index}
-            radius={theme.radius.lg}
-            style={styles.blob}
-          />
+          <View style={styles.blob}>
+            <GradientBlob
+              colors={theme.gradients[card.gradientKey]}
+              seed={index}
+              radius={theme.radius.lg}
+              style={StyleSheet.absoluteFill}
+            />
+            <OnboardingFigure
+              kind={card.figure}
+              stat={card.stat}
+              caption={card.statCaption}
+            />
+          </View>
 
           <Text style={styles.kicker}>{card.kicker}</Text>
           <Text style={styles.title}>{card.title}</Text>
           <Text style={styles.body}>{card.body}</Text>
+          {card.footnote ? (
+            <Text style={styles.footnote}>{card.footnote}</Text>
+          ) : null}
 
           <View style={styles.dots}>
             {CARDS.map((_, i) => (
@@ -123,9 +145,9 @@ export default function OnboardingScreen() {
 function makeStyles(theme) {
   const { color, font, type } = theme;
   return StyleSheet.create({
+    // Transparent: the shared bg + constellation live in app/_layout.jsx.
     container: {
       flex: 1,
-      backgroundColor: color.bg,
     },
     scroll: {
       flexGrow: 1,
@@ -171,6 +193,11 @@ function makeStyles(theme) {
       // Fixed height across cards would be nicer than reflow, but copy lengths
       // are close enough that the buttons barely move.
       minHeight: 130,
+    },
+    footnote: {
+      ...type.small,
+      color: color.inkFaint,
+      marginTop: 8,
     },
     dots: {
       flexDirection: "row",

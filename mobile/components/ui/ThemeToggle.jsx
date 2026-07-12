@@ -11,7 +11,9 @@ export default function ThemeToggle({ style }) {
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel={isDark ? "Switch to light mode" : "Switch to dark mode"}
+      accessibilityLabel={
+        isDark ? "Switch to light mode" : "Switch to dark mode"
+      }
       onPress={toggleMode}
       style={({ pressed }) => [
         styles.base,
@@ -24,7 +26,9 @@ export default function ThemeToggle({ style }) {
         style,
       ]}
     >
-      <Text style={[styles.icon, { color: color.ink }]}>{isDark ? "☀" : "☾"}</Text>
+      <Text style={[styles.icon, { color: color.ink }]}>
+        {isDark ? "☀" : "☾"}
+      </Text>
     </Pressable>
   );
 }

@@ -2,26 +2,45 @@
 // and ask for trust; Kratt shows the evidence so the user practices reading
 // patterns. Ends with paraphrased sources (URLs only, no long quotes).
 import { useMemo } from "react";
-import { Linking, Pressable, StyleSheet, Text, useWindowDimensions, View } from "react-native";
+import {
+  Linking,
+  Pressable,
+  StyleSheet,
+  Text,
+  useWindowDimensions,
+  View,
+} from "react-native";
 import { useTheme } from "../../context/ThemeContext";
 import SectionShell from "./SectionShell";
 import GradientBlob from "../ui/GradientBlob";
 
+// Numbered in render order: [1], [2], … — reference markers elsewhere in the
+// app (onboarding card 3 cites [1]) point at these positions, so a reorder
+// here must be checked against every "[n]" in copy. All URLs verified live
+// and matched against the actual page (2026-07-12).
 const SOURCES = [
+  {
+    // Cited as [1] by onboarding card 3 — the 9–15% estimate comes from
+    // this paper's abstract, verbatim scope: "active Twitter accounts".
+    label: "Varol et al. — Online Human-Bot Interactions (2017)",
+    note: "Estimated that between 9% and 15% of active Twitter accounts were bots.",
+    url: "https://arxiv.org/abs/1703.03107",
+  },
   {
     label: "Ferrara et al. — The Rise of Social Bots (2016)",
     note: "How automated accounts imitate real users and steer online discussion.",
     url: "https://arxiv.org/abs/1407.5225",
   },
   {
-    label: "Varol et al. — Online Human-Bot Interactions (2017)",
-    note: "Estimating how much of a platform's account base behaves automatically.",
-    url: "https://arxiv.org/abs/1703.03107",
-  },
-  {
-    label: "Civic Online Reasoning — Digital Inquiry Group (formerly Stanford History Education Group)",
+    label:
+      "Civic Online Reasoning — Digital Inquiry Group (formerly Stanford History Education Group)",
     note: "Evidence that evaluating online sources is a skill that needs explicit practice.",
     url: "https://cor.stanford.edu",
+  },
+  {
+    label: "UNESCO — Media and Information Literacy Curriculum, 2nd ed. (2021)",
+    note: "“Media and information literate citizens: think critically, click wisely!” — the international MIL competency framework.",
+    url: "https://www.unesco.org/en/articles/media-and-information-literate-citizens-think-critically-click-wisely",
   },
 ];
 
@@ -57,25 +76,53 @@ export default function GapSection() {
           <Text style={styles.compareKicker}>KRATT</Text>
           <Text style={styles.compareBody}>
             Shows its working: four evidence categories and the actual flagged
-            comments. The score is where your judgment starts, not where it
-            ends — so the pattern-reading skill stays with you.
+            comments. The score is where your judgment starts, not where it ends
+            — so the pattern-reading skill stays with you.
           </Text>
         </View>
+      </View>
+
+      {/* The stated blind spot. Kratt's four categories are content signals —
+          they read the text of comments. Coordination leaves other traces
+          (timing, account age, cross-video networks) that this build doesn't
+          measure, and a transparency pitch that hid that would undercut
+          itself. Dashed border on purpose: a limitation, not a feature. */}
+      <View style={styles.limitCard}>
+        <Text style={styles.limitKicker}>WHAT KRATT CAN&apos;T SEE</Text>
+        <Text style={styles.limitBody}>
+          Kratt reads what comments say — not who posted them, or when. Real
+          coordination also leaves traces in places this build doesn&apos;t
+          look: a burst of comments in the minutes after upload, clusters of
+          freshly created accounts, the same account pushing the same line
+          across unrelated videos.
+        </Text>
+        <Text style={styles.limitBody}>
+          Those signals matter; Kratt just doesn&apos;t measure them yet. A
+          comment section can score clean here and still be coordinated in ways
+          only timing and account data would reveal. Treat the score as one lens
+          on the section, not the whole picture.
+        </Text>
       </View>
 
       <Text style={[theme.type.monoLabel, styles.sourcesLabel]}>
         SOURCES &amp; FURTHER READING
       </Text>
       <View style={styles.sourceList}>
-        {SOURCES.map((source) => (
+        {SOURCES.map((source, index) => (
           <Pressable
             key={source.url}
             accessibilityRole="link"
-            accessibilityLabel={`Open source: ${source.label}`}
+            accessibilityLabel={`Open source ${index + 1}: ${source.label}`}
             onPress={() => Linking.openURL(source.url)}
-            style={({ pressed }) => [styles.sourceRow, pressed && { opacity: 0.7 }]}
+            style={({ pressed }) => [
+              styles.sourceRow,
+              pressed && { opacity: 0.7 },
+            ]}
           >
-            <Text style={styles.sourceTitle}>{source.label}</Text>
+            <Text style={styles.sourceTitle}>
+              <Text style={styles.sourceNumber}>[{index + 1}]</Text>{" "}
+              {source.label}
+            </Text>
             <Text style={styles.sourceNote}>{source.note}</Text>
             <Text style={styles.sourceUrl}>{source.url}</Text>
           </Pressable>
@@ -126,8 +173,32 @@ function makeStyles(theme) {
     compareBody: {
       ...type.body,
     },
+    // Deliberately NOT a surface card: dashed hairline, no fill, mono kicker.
+    // The compare cards above state features; this states a limitation, and
+    // the different dress keeps the two kinds of claim from blurring.
+    limitCard: {
+      borderWidth: 1,
+      borderStyle: "dashed",
+      borderColor: color.borderStrong,
+      borderRadius: radius.md,
+      padding: 20,
+      gap: 10,
+      marginBottom: 40,
+    },
+    limitKicker: {
+      ...type.monoLabel,
+      color: color.ink,
+    },
+    limitBody: {
+      ...type.body,
+      maxWidth: 620,
+    },
     sourcesLabel: {
       marginBottom: 12,
+    },
+    sourceNumber: {
+      fontFamily: font.mono,
+      color: color.inkFaint,
     },
     sourceList: {
       borderTopWidth: 1,

@@ -32,8 +32,8 @@ export default function HeroSection({ onAnalyze, onSeeHow }) {
           </Text>
 
           <Text style={styles.subhead}>
-            Paste a YouTube link, and Kratt breaks the comment section down
-            into evidence anyone can read.
+            Paste a YouTube link, and Kratt breaks the comment section down into
+            evidence anyone can read.
           </Text>
 
           <View style={styles.buttons}>

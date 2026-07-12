@@ -59,8 +59,8 @@ export default function HistoryScreen() {
 
         {entries == null ? null : entries.length === 0 ? (
           <Text style={styles.empty}>
-            Nothing here yet. Every analysis you run is saved on this device,
-            so you can see your verification habit build up.
+            Nothing here yet. Every analysis you run is saved on this device, so
+            you can see your verification habit build up.
           </Text>
         ) : (
           <View style={styles.list}>
@@ -72,16 +72,19 @@ export default function HistoryScreen() {
                   key={`${entry.timestamp}-${index}`}
                   accessibilityRole="button"
                   accessibilityLabel={`Re-run analysis for ${entry.videoUrl}`}
-                  onPress={() =>
-                    videoId && router.push(`/analysis/${videoId}`)
-                  }
-                  style={({ pressed }) => [styles.row, pressed && styles.rowPressed]}
+                  onPress={() => videoId && router.push(`/analysis/${videoId}`)}
+                  style={({ pressed }) => [
+                    styles.row,
+                    pressed && styles.rowPressed,
+                  ]}
                 >
                   <View style={styles.rowText}>
                     <Text style={styles.rowUrl} numberOfLines={1}>
                       {entry.videoUrl}
                     </Text>
-                    <Text style={styles.rowWhen}>{formatWhen(entry.timestamp)}</Text>
+                    <Text style={styles.rowWhen}>
+                      {formatWhen(entry.timestamp)}
+                    </Text>
                   </View>
                   <View
                     style={[
@@ -90,7 +93,10 @@ export default function HistoryScreen() {
                     ]}
                   >
                     <Text
-                      style={[styles.scoreText, { color: theme.risk[tier].text }]}
+                      style={[
+                        styles.scoreText,
+                        { color: theme.risk[tier].text },
+                      ]}
                     >
                       {entry.botPercentage}%
                     </Text>
@@ -115,9 +121,9 @@ export default function HistoryScreen() {
 function makeStyles(theme) {
   const { color, font, radius, type } = theme;
   return StyleSheet.create({
+    // Transparent: the shared bg + constellation live in app/_layout.jsx.
     screen: {
       flex: 1,
-      backgroundColor: color.bg,
     },
     scroll: {
       padding: 24,
