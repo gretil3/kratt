@@ -100,7 +100,10 @@ export default function AnalysisScreen() {
   // refreshes, new videos) always pass through this step.
   if (guess == null) {
     return (
-      <ScrollView style={styles.screen} contentContainerStyle={styles.guessScroll}>
+      <ScrollView
+        style={styles.screen}
+        contentContainerStyle={styles.guessScroll}
+      >
         <ThemedStatusBar />
         <GuessPanel onSubmit={setGuess} />
       </ScrollView>
@@ -200,9 +203,9 @@ export default function AnalysisScreen() {
 function makeStyles(theme) {
   const { color, font, radius, type } = theme;
   return StyleSheet.create({
+    // Transparent: the shared bg + constellation live in app/_layout.jsx.
     screen: {
       flex: 1,
-      backgroundColor: color.bg,
     },
     scroll: {
       padding: 24,

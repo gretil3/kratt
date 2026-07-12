@@ -7,7 +7,12 @@ import { TIER_LABELS, tierForScore } from "../../lib/riskLevels";
 // Ring gauge for bot_percentage (0–100), colored by risk tier. Sizes scale
 // from the `size` prop so the same component works on the result screen and
 // in denser contexts (e.g. a future history list).
-export default function ScoreGauge({ value, size = 180, strokeWidth = 12, caption = "likely bot activity" }) {
+export default function ScoreGauge({
+  value,
+  size = 180,
+  strokeWidth = 12,
+  caption = "likely bot activity",
+}) {
   const theme = useTheme();
   const styles = useMemo(() => makeStyles(theme), [theme]);
   const { color, risk } = theme;

@@ -1,8 +1,9 @@
 // Stands in for `POST /analyze` from ../docs/api-contract.md until the backend is live.
 // Response shapes below are copied verbatim from the contract's example payloads.
 
-const YOUTUBE_URL_PATTERN =
-  /^(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=[\w-]+|youtu\.be\/[\w-]+)/i;
+// URL validation is delegated to lib/youtube.js — keeping a second regex here
+// is how m.youtube.com links got rejected while the home screen accepted them.
+import { isValidYouTubeUrl } from "./youtube";
 
 const MOCK_DELAY_MS = 2200;
 
@@ -31,7 +32,8 @@ export const ERROR_MESSAGES = {
 };
 
 // Testing hooks: include one of these keywords in the pasted URL to preview
-// each error state without a live backend (e.g. "https://youtu.be/notfound").
+// each error state without a live backend. The URL must still parse as a real
+// YouTube link (11-char ID), e.g. "https://youtu.be/notfound000".
 const TEST_KEYWORD_TO_ERROR = [
   [/notfound/i, "video_not_found"],
   [/nocomments/i, "no_comments"],
@@ -48,7 +50,7 @@ export function mockAnalyze(videoUrl) {
 
   return new Promise((resolve) => {
     setTimeout(() => {
-      if (!YOUTUBE_URL_PATTERN.test(url)) {
+      if (!isValidYouTubeUrl(url)) {
         resolve(errorResponse("invalid_url"));
         return;
       }

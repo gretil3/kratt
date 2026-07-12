@@ -1,9 +1,7 @@
 import { useRef } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { useRouter } from "expo-router";
-import { useTheme } from "../../context/ThemeContext";
 import ThemedStatusBar from "../ui/ThemedStatusBar";
-import ConstellationBackground from "./ConstellationBackground";
 import LandingNav from "./LandingNav";
 import HeroSection from "./HeroSection";
 import WhySection from "./WhySection";
@@ -17,7 +15,6 @@ const ANCHOR_OFFSET = 80;
 
 export default function LandingScreen() {
   const router = useRouter();
-  const { color } = useTheme();
   const scrollRef = useRef(null);
   const sectionOffsets = useRef({});
 
@@ -38,9 +35,10 @@ export default function LandingScreen() {
   };
 
   return (
-    <View style={[styles.root, { backgroundColor: color.bg }]}>
+    // Background color + constellation come from app/_layout.jsx — this root
+    // stays transparent so the shared particle field shows through.
+    <View style={styles.root}>
       <ThemedStatusBar />
-      <ConstellationBackground />
       <ScrollView
         ref={scrollRef}
         stickyHeaderIndices={[0]}

@@ -1,5 +1,11 @@
 import { useMemo } from "react";
-import { Pressable, StyleSheet, Text, useWindowDimensions, View } from "react-native";
+import {
+  Pressable,
+  StyleSheet,
+  Text,
+  useWindowDimensions,
+  View,
+} from "react-native";
 import { useTheme } from "../../context/ThemeContext";
 import GradientBlob from "../ui/GradientBlob";
 import PillButton from "../ui/PillButton";

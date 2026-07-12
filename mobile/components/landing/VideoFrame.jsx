@@ -3,7 +3,15 @@
 // native, no embeddable player is wired up yet, so it falls back to a
 // thumbnail + play button that opens the video in the browser/YouTube app.
 import { createElement, useMemo } from "react";
-import { Image, Linking, Platform, Pressable, StyleSheet, Text, View } from "react-native";
+import {
+  Image,
+  Linking,
+  Platform,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { useTheme } from "../../context/ThemeContext";
 
 // Placeholder walkthrough clip — swap for the real Kratt demo/trailer later.
@@ -29,36 +37,43 @@ export default function VideoFrame({ style }) {
       </View>
 
       <View style={styles.player}>
-        {Platform.OS === "web"
-          ? createElement("iframe", {
-              src: `https://www.youtube.com/embed/${DEMO_VIDEO_ID}`,
-              title: "Kratt walkthrough (placeholder)",
-              style: { width: "100%", height: "100%", border: 0, display: "block" },
-              allow:
-                "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture",
-              allowFullScreen: true,
-            })
-          : (
-            <Pressable
-              style={styles.nativeFallback}
-              onPress={() =>
-                Linking.openURL(`https://www.youtube.com/watch?v=${DEMO_VIDEO_ID}`)
-              }
-            >
-              <Image
-                source={{
-                  uri: `https://img.youtube.com/vi/${DEMO_VIDEO_ID}/hqdefault.jpg`,
-                }}
-                style={StyleSheet.absoluteFill}
-                resizeMode="cover"
-              />
-              <View style={styles.scrim} />
-              <View style={styles.playButton}>
-                <Text style={styles.playIcon}>▶</Text>
-              </View>
-              <Text style={styles.nativeFallbackText}>Watch the walkthrough</Text>
-            </Pressable>
-          )}
+        {Platform.OS === "web" ? (
+          createElement("iframe", {
+            src: `https://www.youtube.com/embed/${DEMO_VIDEO_ID}`,
+            title: "Kratt walkthrough (placeholder)",
+            style: {
+              width: "100%",
+              height: "100%",
+              border: 0,
+              display: "block",
+            },
+            allow:
+              "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture",
+            allowFullScreen: true,
+          })
+        ) : (
+          <Pressable
+            style={styles.nativeFallback}
+            onPress={() =>
+              Linking.openURL(
+                `https://www.youtube.com/watch?v=${DEMO_VIDEO_ID}`
+              )
+            }
+          >
+            <Image
+              source={{
+                uri: `https://img.youtube.com/vi/${DEMO_VIDEO_ID}/hqdefault.jpg`,
+              }}
+              style={StyleSheet.absoluteFill}
+              resizeMode="cover"
+            />
+            <View style={styles.scrim} />
+            <View style={styles.playButton}>
+              <Text style={styles.playIcon}>▶</Text>
+            </View>
+            <Text style={styles.nativeFallbackText}>Watch the walkthrough</Text>
+          </Pressable>
+        )}
       </View>
     </View>
   );

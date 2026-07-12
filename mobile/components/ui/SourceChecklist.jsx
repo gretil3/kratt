@@ -58,9 +58,7 @@ export default function SourceChecklist({ style }) {
                 {isChecked ? <Text style={styles.check}>✓</Text> : null}
               </View>
               <View style={styles.rowText}>
-                <Text
-                  style={[styles.label, isChecked && styles.labelChecked]}
-                >
+                <Text style={[styles.label, isChecked && styles.labelChecked]}>
                   {item.label}
                 </Text>
                 <Text style={styles.detail}>{item.detail}</Text>

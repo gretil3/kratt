@@ -2,7 +2,14 @@
 // and ask for trust; Kratt shows the evidence so the user practices reading
 // patterns. Ends with paraphrased sources (URLs only, no long quotes).
 import { useMemo } from "react";
-import { Linking, Pressable, StyleSheet, Text, useWindowDimensions, View } from "react-native";
+import {
+  Linking,
+  Pressable,
+  StyleSheet,
+  Text,
+  useWindowDimensions,
+  View,
+} from "react-native";
 import { useTheme } from "../../context/ThemeContext";
 import SectionShell from "./SectionShell";
 import GradientBlob from "../ui/GradientBlob";
@@ -19,7 +26,8 @@ const SOURCES = [
     url: "https://arxiv.org/abs/1703.03107",
   },
   {
-    label: "Civic Online Reasoning — Digital Inquiry Group (formerly Stanford History Education Group)",
+    label:
+      "Civic Online Reasoning — Digital Inquiry Group (formerly Stanford History Education Group)",
     note: "Evidence that evaluating online sources is a skill that needs explicit practice.",
     url: "https://cor.stanford.edu",
   },
@@ -57,8 +65,8 @@ export default function GapSection() {
           <Text style={styles.compareKicker}>KRATT</Text>
           <Text style={styles.compareBody}>
             Shows its working: four evidence categories and the actual flagged
-            comments. The score is where your judgment starts, not where it
-            ends — so the pattern-reading skill stays with you.
+            comments. The score is where your judgment starts, not where it ends
+            — so the pattern-reading skill stays with you.
           </Text>
         </View>
       </View>
@@ -73,7 +81,10 @@ export default function GapSection() {
             accessibilityRole="link"
             accessibilityLabel={`Open source: ${source.label}`}
             onPress={() => Linking.openURL(source.url)}
-            style={({ pressed }) => [styles.sourceRow, pressed && { opacity: 0.7 }]}
+            style={({ pressed }) => [
+              styles.sourceRow,
+              pressed && { opacity: 0.7 },
+            ]}
           >
             <Text style={styles.sourceTitle}>{source.label}</Text>
             <Text style={styles.sourceNote}>{source.note}</Text>
