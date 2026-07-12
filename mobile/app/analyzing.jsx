@@ -47,7 +47,10 @@ export default function AnalyzingScreen() {
     <View style={styles.container}>
       <ThemedStatusBar />
       <View style={styles.glow}>
-        <GradientBlob colors={theme.gradients.brand} style={StyleSheet.absoluteFill} />
+        <GradientBlob
+          colors={theme.gradients.brand}
+          style={StyleSheet.absoluteFill}
+        />
       </View>
       <ActivityIndicator size="large" color={theme.color.ink} />
       <Text style={styles.status}>{STATUS_MESSAGES[statusIndex]}…</Text>

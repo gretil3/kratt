@@ -25,7 +25,7 @@ export default function ErrorScreen() {
   const { error, reset } = useAnalysis();
 
   const title = error
-    ? ERROR_TITLES[error.error] ?? FALLBACK_TITLE
+    ? (ERROR_TITLES[error.error] ?? FALLBACK_TITLE)
     : FALLBACK_TITLE;
   // Message body comes from the API response as-is (docs/api-contract.md).
   const message = error?.message ?? FALLBACK_MESSAGE;

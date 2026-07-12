@@ -39,12 +39,42 @@ export const accent = {
 
 function buildType(color) {
   return {
-    display: { fontFamily: font.display, fontSize: 36, lineHeight: 42, color: color.ink },
-    h2: { fontFamily: font.display, fontSize: 26, lineHeight: 32, color: color.ink },
-    h3: { fontFamily: font.displayMedium, fontSize: 19, lineHeight: 25, color: color.ink },
-    bodyLarge: { fontFamily: font.sans, fontSize: 17, lineHeight: 26, color: color.inkMuted },
-    body: { fontFamily: font.sans, fontSize: 15, lineHeight: 23, color: color.inkMuted },
-    small: { fontFamily: font.sans, fontSize: 13, lineHeight: 19, color: color.inkFaint },
+    display: {
+      fontFamily: font.display,
+      fontSize: 36,
+      lineHeight: 42,
+      color: color.ink,
+    },
+    h2: {
+      fontFamily: font.display,
+      fontSize: 26,
+      lineHeight: 32,
+      color: color.ink,
+    },
+    h3: {
+      fontFamily: font.displayMedium,
+      fontSize: 19,
+      lineHeight: 25,
+      color: color.ink,
+    },
+    bodyLarge: {
+      fontFamily: font.sans,
+      fontSize: 17,
+      lineHeight: 26,
+      color: color.inkMuted,
+    },
+    body: {
+      fontFamily: font.sans,
+      fontSize: 15,
+      lineHeight: 23,
+      color: color.inkMuted,
+    },
+    small: {
+      fontFamily: font.sans,
+      fontSize: 13,
+      lineHeight: 19,
+      color: color.inkFaint,
+    },
     monoLabel: {
       fontFamily: font.monoBold,
       fontSize: 11,
@@ -103,7 +133,11 @@ const darkRisk = {
   low: { main: "#2FE6C8", text: "#2FE6C8", tint: "rgba(47,230,200,0.14)" },
   medium: { main: "#FFB020", text: "#FFB020", tint: "rgba(255,176,32,0.14)" },
   high: { main: "#FF5C5C", text: "#FF5C5C", tint: "rgba(255,92,92,0.14)" },
-  neutral: { main: darkColor.inkMuted, text: darkColor.inkMuted, tint: "rgba(245,245,247,0.08)" },
+  neutral: {
+    main: darkColor.inkMuted,
+    text: darkColor.inkMuted,
+    tint: "rgba(245,245,247,0.08)",
+  },
 };
 
 const lightRisk = {
@@ -111,7 +145,11 @@ const lightRisk = {
   low: { main: "#12B39B", text: "#0B7261", tint: "rgba(18,179,155,0.14)" },
   medium: { main: "#C77F0A", text: "#9A6206", tint: "rgba(199,127,10,0.14)" },
   high: { main: "#E23D3D", text: "#C42B2B", tint: "rgba(226,61,61,0.12)" },
-  neutral: { main: lightColor.inkMuted, text: lightColor.inkMuted, tint: "rgba(20,20,26,0.06)" },
+  neutral: {
+    main: lightColor.inkMuted,
+    text: lightColor.inkMuted,
+    tint: "rgba(20,20,26,0.06)",
+  },
 };
 
 export const darkTheme = {

@@ -15,29 +15,25 @@ const CARDS = [
   {
     kicker: "MANUFACTURED CONSENSUS",
     title: "Agreement can be staged",
-    body:
-      "Astroturfing is the practice of using fake or coordinated accounts that pose as ordinary people, so one actor's message looks like a groundswell of independent voices. The “everyone agrees” you sense in a comment section may have been built on purpose.",
+    body: "Astroturfing is the practice of using fake or coordinated accounts that pose as ordinary people, so one actor's message looks like a groundswell of independent voices. The “everyone agrees” you sense in a comment section may have been built on purpose.",
     gradientKey: "brand",
   },
   {
     kicker: "WHY IT WORKS",
     title: "We trust the crowd by default",
-    body:
-      "People lean on social proof: when a view looks like the majority opinion, we grant it extra credibility — usually without noticing. A comment section that reads as unanimous can shift what you believe, even when the crowd isn't real.",
+    body: "People lean on social proof: when a view looks like the majority opinion, we grant it extra credibility — usually without noticing. A comment section that reads as unanimous can shift what you believe, even when the crowd isn't real.",
     gradientKey: "copy_paste",
   },
   {
     kicker: "THE SCALE",
     title: "This isn't a rare trick",
-    body:
-      "Researchers studying major social platforms have repeatedly found that a meaningful share of accounts and engagement is automated or coordinated — enough to tilt how popular an opinion appears. Comment sections are a cheap, high-visibility place to do it.",
+    body: "Researchers studying major social platforms have repeatedly found that a meaningful share of accounts and engagement is automated or coordinated — enough to tilt how popular an opinion appears. Comment sections are a cheap, high-visibility place to do it.",
     gradientKey: "low_effort",
   },
   {
     kicker: "WHERE KRATT FITS",
     title: "A trainer, not a judge",
-    body:
-      "Kratt doesn't hand down verdicts on videos. It shows you the evidence — how much of a comment section looks automated, and which patterns give it away — so you get better at spotting manufactured consensus on your own.",
+    body: "Kratt doesn't hand down verdicts on videos. It shows you the evidence — how much of a comment section looks automated, and which patterns give it away — so you get better at spotting manufactured consensus on your own.",
     gradientKey: "genuine",
   },
 ];
@@ -63,7 +59,8 @@ export default function OnboardingScreen() {
         <View style={styles.content}>
           <View style={styles.topRow}>
             <Text style={styles.progress}>
-              {String(index + 1).padStart(2, "0")} / {String(CARDS.length).padStart(2, "0")}
+              {String(index + 1).padStart(2, "0")} /{" "}
+              {String(CARDS.length).padStart(2, "0")}
             </Text>
             {!isLast && (
               <Pressable

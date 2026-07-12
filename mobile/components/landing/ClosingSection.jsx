@@ -13,14 +13,18 @@ export default function ClosingSection({ onTry }) {
     <SectionShell style={styles.section}>
       <View style={styles.callout}>
         <Text style={styles.calloutText}>
-          Kratt doesn&apos;t delete or block comments. It exists to train a
-          more critical reading habit, in the spirit of media literacy
-          championed by the UNESCO Youth Hackathon.
+          Kratt doesn&apos;t delete or block comments. It exists to train a more
+          critical reading habit, in the spirit of media literacy championed by
+          the UNESCO Youth Hackathon.
         </Text>
       </View>
 
       <View style={styles.ctaPanel}>
-        <GradientBlob colors={theme.gradients.brand} seed={1} style={StyleSheet.absoluteFill} />
+        <GradientBlob
+          colors={theme.gradients.brand}
+          seed={1}
+          style={StyleSheet.absoluteFill}
+        />
         <View style={styles.ctaOverlay} />
         <View style={styles.ctaContent}>
           <Text style={styles.ctaHeading}>
@@ -35,7 +39,11 @@ export default function ClosingSection({ onTry }) {
 
       <View style={styles.footer}>
         <View style={styles.footerBrand}>
-          <GradientBlob colors={theme.gradients.brand} radius={4} style={styles.footerMark} />
+          <GradientBlob
+            colors={theme.gradients.brand}
+            radius={4}
+            style={styles.footerMark}
+          />
           <Text style={styles.footerLogo}>Kratt</Text>
         </View>
         <Text style={styles.footerText}>UNESCO Youth Hackathon 2026</Text>
