@@ -15,7 +15,6 @@ import { useAnalysis } from "../../context/AnalysisContext";
 import { useTheme } from "../../context/ThemeContext";
 import PillButton from "../../components/ui/PillButton";
 import CategoryCard from "../../components/ui/CategoryCard";
-import GuessPanel from "../../components/ui/GuessPanel";
 import ScoreGauge from "../../components/ui/ScoreGauge";
 import SourceChecklist from "../../components/ui/SourceChecklist";
 import ThemeToggle from "../../components/ui/ThemeToggle";
@@ -51,8 +50,7 @@ export default function AnalysisScreen() {
   const theme = useTheme();
   const styles = useMemo(() => makeStyles(theme), [theme]);
   const { videoId } = useLocalSearchParams();
-  const { videoUrl, setVideoUrl, result, reset, guess, setGuess } =
-    useAnalysis();
+  const { videoUrl, setVideoUrl, result, reset, guess } = useAnalysis();
   const { width } = useWindowDimensions();
   // On a cold deep link this screen mounts before the root navigator is
   // ready; navigating then throws. Wait for the root state key.
@@ -95,21 +93,10 @@ export default function AnalysisScreen() {
     router.replace("/home");
   };
 
-  // Guess-before-reveal: the result stays hidden until the user commits an
-  // estimate. `guess` is reset on every runAnalysis, so re-runs (deep links,
-  // refreshes, new videos) always pass through this step.
-  if (guess == null) {
-    return (
-      <ScrollView
-        style={styles.screen}
-        contentContainerStyle={styles.guessScroll}
-      >
-        <ThemedStatusBar />
-        <GuessPanel onSubmit={setGuess} />
-      </ScrollView>
-    );
-  }
-
+  // Guess-before-reveal is enforced upstream: /analyzing only navigates here
+  // once BOTH the result and the locked guess exist, and the deep-link
+  // recovery above re-routes through /analyzing (which resets the guess), so
+  // by this point `guess` is always set.
   return (
     <ScrollView style={styles.screen} contentContainerStyle={styles.scroll}>
       <ThemedStatusBar />
@@ -233,11 +220,6 @@ function makeStyles(theme) {
       backgroundColor: color.border,
       marginTop: 20,
       marginBottom: 28,
-    },
-    guessScroll: {
-      flexGrow: 1,
-      justifyContent: "center",
-      padding: 24,
     },
     gaugeBlock: {
       alignItems: "center",
