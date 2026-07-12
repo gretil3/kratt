@@ -20,6 +20,8 @@ export default function CategoryCard({
   stamp,
   label,
   description,
+  example,
+  tell,
   percent,
   neutral = false,
   style,
@@ -49,6 +51,18 @@ export default function CategoryCard({
 
       <Text style={styles.label}>{label}</Text>
       <Text style={styles.description}>{description}</Text>
+
+      {/* Teaching material — explainer (landing) mode only. The result screen
+          shows measurements; the landing page teaches the spotting skill. */}
+      {!showData && example ? (
+        <Text style={styles.example}>“{example}”</Text>
+      ) : null}
+      {!showData && tell ? (
+        <View style={styles.tellBlock}>
+          <Text style={styles.tellLabel}>THE TELL</Text>
+          <Text style={styles.tellText}>{tell}</Text>
+        </View>
+      ) : null}
 
       {showData ? (
         <View style={styles.shareBlock}>
@@ -111,6 +125,26 @@ function makeStyles(theme) {
       marginBottom: 4,
     },
     description: {
+      ...type.small,
+    },
+    // A realistic specimen of the category, set like a quoted comment.
+    example: {
+      ...type.body,
+      color: color.ink,
+      marginTop: 12,
+      paddingLeft: 12,
+      borderLeftWidth: 2,
+      borderLeftColor: color.borderStrong,
+    },
+    tellBlock: {
+      marginTop: 12,
+      gap: 4,
+    },
+    tellLabel: {
+      ...type.monoLabel,
+      fontSize: 10,
+    },
+    tellText: {
       ...type.small,
     },
     shareBlock: {

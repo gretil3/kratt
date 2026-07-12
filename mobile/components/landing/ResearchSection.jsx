@@ -35,6 +35,8 @@ export default function ResearchSection() {
             stamp={category.stamp}
             label={category.label}
             description={category.description}
+            example={category.example}
+            tell={category.tell}
             style={[styles.cell, { flexBasis: isWide ? "46%" : "100%" }]}
           />
         ))}

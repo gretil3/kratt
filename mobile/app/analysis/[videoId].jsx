@@ -17,6 +17,7 @@ import PillButton from "../../components/ui/PillButton";
 import CategoryCard from "../../components/ui/CategoryCard";
 import CompositionBar from "../../components/ui/CompositionBar";
 import GradientBlob from "../../components/ui/GradientBlob";
+import LimitationsCard from "../../components/ui/LimitationsCard";
 import ScoreGauge from "../../components/ui/ScoreGauge";
 import SourceChecklist from "../../components/ui/SourceChecklist";
 import ThemeToggle from "../../components/ui/ThemeToggle";
@@ -223,6 +224,10 @@ export default function AnalysisScreen() {
 
         <SourceChecklist style={styles.checklist} />
 
+        {/* The tool's own failure modes, stated before the user is asked to
+            trust anything it said above. */}
+        <LimitationsCard style={styles.limitations} />
+
         <Text style={styles.footnote}>
           This score is a starting point for critical thinking, not a final
           verdict — read the examples and judge for yourself.
@@ -350,6 +355,9 @@ function makeStyles(theme) {
       color: "#FFFFFF",
     },
     checklist: {
+      marginBottom: 28,
+    },
+    limitations: {
       marginBottom: 28,
     },
     footnote: {
