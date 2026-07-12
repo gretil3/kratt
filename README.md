@@ -4,6 +4,8 @@
 
 Kratt is a media literacy tool built for **UNESCO Youth Hackathon 2026** (theme: *Play Your Part — Youth Designing the Future of Media and Information Literacy*). Paste a YouTube video link, and Kratt returns an estimate of how much of the comment section is likely bot activity — broken down into four categories (ads & spam, copy-paste, low-effort filler, genuine) so the score comes with a reason, not just a number.
 
+The app teaches while it scores: the user commits their own guess before seeing the result, each evidence category comes with the concrete "tell" a human can look for, and the app states its own blind spots out loud — what Kratt can't see (landing page) and why the score can be wrong (result screen). Every research claim in the app traces to a numbered, verified source.
+
 ## Team
 
 | Name | Role |
@@ -18,13 +20,14 @@ Kratt is a media literacy tool built for **UNESCO Youth Hackathon 2026** (theme:
 
 ```
 kratt/
+├── .github/workflows/     # mobile CI: format, lint, tests, web export on every PR
 ├── backend/              # FastAPI + ML pipeline
 │   ├── app/
 │   ├── notebooks/        # labeling experiments, EDA
 │   ├── requirements.txt
 │   └── README.md
 ├── mobile/                # React Native (Expo) — app + web landing page
-│   ├── app/               # screens (expo-router): home, analyzing, analysis/[videoId], error
+│   ├── app/               # screens (expo-router): home, onboarding, analyzing, analysis/[videoId], history, error
 │   ├── components/        # landing sections + shared UI (score gauge, category cards)
 │   ├── theme/             # design tokens — single source of truth for color/type
 │   ├── lib/               # mock API per the contract, category/risk helpers
@@ -89,5 +92,9 @@ Never commit `.env` — it's already in `.gitignore`.
 
 ## Known limitations
 
-- Bot/human labels are weak-supervised (heuristic-based), not ground truth. This is stated openly in the pitch, not hidden.
+These are stated openly — in the pitch *and* inside the app itself (the landing page's "What Kratt can't see" block and the result screen's "Why this score can be wrong" card).
+
+- Bot/human labels are weak-supervised (heuristic-based), not ground truth.
+- The four evidence categories are **content signals** — they read what comments say, not who posted them or when. Coordination signals (posting-time bursts, account age, cross-video account networks) are not measured in this build.
+- The low-effort heuristic can over-flag real people whose genuine style is short and enthusiastic — especially second-language writers and fandom idiom. The score is a starting point for looking, not a verdict on any individual commenter.
 - Demo dataset is a fixed pull from the YouTube Data API, not a live scraper.
