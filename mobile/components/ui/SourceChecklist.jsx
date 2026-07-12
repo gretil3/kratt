@@ -4,6 +4,7 @@
 import { useMemo, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { useTheme } from "../../context/ThemeContext";
+import { accent } from "../../theme/themes";
 
 const ITEMS = [
   {
@@ -77,10 +78,14 @@ function makeStyles(theme) {
     sectionLabel: {
       marginBottom: 12,
     },
+    // Pink left accent: this card is the user's own manual actions, distinct
+    // from algorithmic evidence (violet) and guess calibration (teal/amber).
     list: {
       backgroundColor: color.surface,
       borderWidth: 1,
       borderColor: color.border,
+      borderLeftWidth: 2,
+      borderLeftColor: accent.pink,
       borderRadius: radius.md,
     },
     row: {

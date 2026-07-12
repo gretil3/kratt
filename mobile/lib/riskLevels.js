@@ -16,16 +16,8 @@ export const TIER_LABELS = {
   high: "High indication",
 };
 
-// A single category's share of all comments → level chip on its card.
-export function levelForShare(percentage) {
-  if (percentage > 25) return "high";
-  if (percentage >= 10) return "medium";
-  return "low";
-}
-
-export const LEVEL_LABELS = {
-  low: "Low",
-  medium: "Medium",
-  high: "High",
-  neutral: "Not a bot signal",
-};
+// levelForShare/LEVEL_LABELS (per-category Low/Medium/High chips) were
+// removed on purpose: the 10–25% "Medium" band swallowed nearly every real
+// video, and a categorical verdict overclaims what the weak-supervised model
+// can back. Category cards now show a proportional mini bar instead. The
+// overall tierForScore above stays — one summary number can carry a label.
