@@ -203,9 +203,9 @@ export default function AnalysisScreen() {
 function makeStyles(theme) {
   const { color, font, radius, type } = theme;
   return StyleSheet.create({
+    // Transparent: the shared bg + constellation live in app/_layout.jsx.
     screen: {
       flex: 1,
-      backgroundColor: color.bg,
     },
     scroll: {
       padding: 24,

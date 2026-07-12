@@ -120,9 +120,9 @@ export default function OnboardingScreen() {
 function makeStyles(theme) {
   const { color, font, type } = theme;
   return StyleSheet.create({
+    // Transparent: the shared bg + constellation live in app/_layout.jsx.
     container: {
       flex: 1,
-      backgroundColor: color.bg,
     },
     scroll: {
       flexGrow: 1,

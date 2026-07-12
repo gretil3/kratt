@@ -61,9 +61,9 @@ export default function AnalyzingScreen() {
 function makeStyles(theme) {
   const { color, type } = theme;
   return StyleSheet.create({
+    // Transparent: the shared bg + constellation live in app/_layout.jsx.
     container: {
       flex: 1,
-      backgroundColor: color.bg,
       alignItems: "center",
       justifyContent: "center",
       gap: 16,

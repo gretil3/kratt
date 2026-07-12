@@ -53,11 +53,11 @@ export default function ErrorScreen() {
 }
 
 function makeStyles(theme) {
-  const { color, font, radius, risk, type } = theme;
+  const { font, radius, risk, type } = theme;
   return StyleSheet.create({
+    // Transparent: the shared bg + constellation live in app/_layout.jsx.
     container: {
       flex: 1,
-      backgroundColor: color.bg,
       alignItems: "center",
       justifyContent: "center",
       paddingHorizontal: 32,

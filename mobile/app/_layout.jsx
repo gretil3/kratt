@@ -1,4 +1,5 @@
-import { Stack } from "expo-router";
+import { View } from "react-native";
+import { Stack, usePathname } from "expo-router";
 import Head from "expo-router/head";
 import {
   useFonts,
@@ -15,16 +16,27 @@ import {
 } from "@expo-google-fonts/space-mono";
 import { AnalysisProvider } from "../context/AnalysisContext";
 import { ThemeProvider, useTheme } from "../context/ThemeContext";
+import ConstellationBackground from "../components/ui/ConstellationBackground";
 
 function RootNavigator() {
   const { color } = useTheme();
+  const pathname = usePathname();
+
   return (
-    <Stack
-      screenOptions={{
-        headerShown: false,
-        contentStyle: { backgroundColor: color.bg },
-      }}
-    />
+    // The root View owns the background color and the constellation is
+    // mounted once here, behind the Stack — so every screen shares the same
+    // ambient field instead of only the landing page having one. Screens must
+    // therefore keep their containers transparent: contentStyle stays
+    // transparent too, or the navigator would paint over the particles.
+    <View style={{ flex: 1, backgroundColor: color.bg }}>
+      <ConstellationBackground density={pathname === "/" ? 1 : 0.45} />
+      <Stack
+        screenOptions={{
+          headerShown: false,
+          contentStyle: { backgroundColor: "transparent" },
+        }}
+      />
+    </View>
   );
 }
 

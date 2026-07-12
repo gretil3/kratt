@@ -147,9 +147,9 @@ export default function HomeScreen() {
 function makeStyles(theme) {
   const { color, font, radius, type, risk } = theme;
   return StyleSheet.create({
+    // Transparent: the shared bg + constellation live in app/_layout.jsx.
     container: {
       flex: 1,
-      backgroundColor: color.bg,
     },
     toggle: {
       position: "absolute",
