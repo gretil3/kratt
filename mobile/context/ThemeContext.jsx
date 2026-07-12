@@ -1,3 +1,5 @@
+/* eslint-env browser */
+// ^ document is only touched behind the Platform.OS === "web" guard below.
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { Platform } from "react-native";
 import { themes, darkTheme } from "../theme/themes";
@@ -48,7 +50,9 @@ export function ThemeProvider({ children }) {
     };
   }, [mode]);
 
-  return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
+  return (
+    <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
+  );
 }
 
 // Full theme palette (color, type, risk, font, radius, layout, gradients).
