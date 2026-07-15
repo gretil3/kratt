@@ -15,14 +15,22 @@ import { useAnalysis } from "../../context/AnalysisContext";
 import { useTheme } from "../../context/ThemeContext";
 import PillButton from "../../components/ui/PillButton";
 import CategoryCard from "../../components/ui/CategoryCard";
+import CompositionBar from "../../components/ui/CompositionBar";
+import GradientBlob from "../../components/ui/GradientBlob";
 import ScoreGauge from "../../components/ui/ScoreGauge";
 import SourceChecklist from "../../components/ui/SourceChecklist";
 import ThemeToggle from "../../components/ui/ThemeToggle";
 import ThemedStatusBar from "../../components/ui/ThemedStatusBar";
+import VideoHeader from "../../components/ui/VideoHeader";
 import { CATEGORIES } from "../../lib/categories";
-import { levelForShare } from "../../lib/riskLevels";
+import { flagReasonFor } from "../../lib/flagReasons";
 import { canonicalUrl, parseVideoId } from "../../lib/youtube";
 import { accent } from "../../theme/themes";
+
+// stamp chip text per category key, for the flagged-comment rows.
+const STAMP_BY_KEY = Object.fromEntries(
+  CATEGORIES.map((category) => [category.key, category.stamp])
+);
 
 /**
  * Response shape per docs/api-contract.md (`POST /analyze`):
@@ -88,6 +96,16 @@ export default function AnalysisScreen() {
 
   const twoColumns = width >= 400;
 
+  // Agreement threshold matches reflectionFor: within 10 points is "close".
+  const guessPalette =
+    Math.abs(guess - bot_percentage) <= 10 ? theme.risk.low : theme.risk.medium;
+
+  // Honest framing for the evidence list: the API sends a small sample, not
+  // every flagged comment — the label must not imply otherwise.
+  const flaggedTotal = Math.round(
+    (total_comments_analyzed * (100 - (breakdown.genuine ?? 0))) / 100
+  );
+
   const handleAnalyzeAnother = () => {
     reset();
     router.replace("/home");
@@ -105,8 +123,8 @@ export default function AnalysisScreen() {
           <Text style={theme.type.monoLabel}>ANALYSIS RESULT</Text>
           <ThemeToggle />
         </View>
-        {/* The contract has no videoTitle, so the canonical URL is the header. */}
-        <Text style={styles.sourceUrl}>{canonicalUrl(videoId)}</Text>
+        {/* Thumbnail + oEmbed title/channel; falls back to the raw URL. */}
+        <VideoHeader videoId={videoId} style={styles.videoHeader} />
 
         <View style={styles.divider} />
 
@@ -118,7 +136,22 @@ export default function AnalysisScreen() {
           </Text>
         </View>
 
-        <View style={styles.guessCompare}>
+        {/* Bridges the gauge to the category cards: the same numbers, as one
+            proportional bar in the cards' colors. */}
+        <CompositionBar breakdown={breakdown} style={styles.composition} />
+
+        <View
+          style={[
+            styles.guessCompare,
+            {
+              // Calibration tint reuses reflectionFor's 10-point agreement
+              // threshold: a close guess reads calm (low), a big miss warms
+              // to amber (medium) — same conditional, styling only.
+              borderLeftColor: guessPalette.main,
+              backgroundColor: guessPalette.tint,
+            },
+          ]}
+        >
           <Text style={styles.guessCompareLine}>
             Your guess: {guess}% — Kratt: {bot_percentage}%
           </Text>
@@ -142,7 +175,7 @@ export default function AnalysisScreen() {
                 label={category.label}
                 description={category.description}
                 percent={percent}
-                level={category.neutral ? "neutral" : levelForShare(percent)}
+                neutral={Boolean(category.neutral)}
                 style={[
                   styles.cell,
                   { flexBasis: twoColumns ? "47%" : "100%" },
@@ -155,17 +188,35 @@ export default function AnalysisScreen() {
         {sample_flagged_comments.length > 0 ? (
           <>
             <Text style={[theme.type.monoLabel, styles.sectionLabel]}>
-              FLAGGED COMMENT EXAMPLES
+              SAMPLE OF FLAGGED COMMENTS — {sample_flagged_comments.length} OF ~
+              {flaggedTotal.toLocaleString("en-US")} DETECTED
             </Text>
             <View style={styles.flaggedList}>
-              {sample_flagged_comments.map((comment, index) => (
-                <View key={index} style={styles.flaggedRow}>
-                  <Text style={styles.flaggedIndex}>
-                    #{String(index + 1).padStart(2, "0")}
-                  </Text>
-                  <Text style={styles.flaggedText}>“{comment}”</Text>
-                </View>
-              ))}
+              {sample_flagged_comments.map((comment, index) => {
+                // Category chip via a client-side heuristic (lib/flagReasons)
+                // until the contract carries a category per sample comment.
+                const reasonKey = flagReasonFor(comment);
+                return (
+                  <View key={index} style={styles.flaggedRow}>
+                    <Text style={styles.flaggedIndex}>
+                      #{String(index + 1).padStart(2, "0")}
+                    </Text>
+                    <Text style={styles.flaggedText}>“{comment}”</Text>
+                    <View style={styles.flagChip}>
+                      <GradientBlob
+                        colors={
+                          theme.gradients[reasonKey] ?? theme.gradients.brand
+                        }
+                        seed={index}
+                        style={StyleSheet.absoluteFill}
+                      />
+                      <Text style={styles.flagChipText}>
+                        {STAMP_BY_KEY[reasonKey]}
+                      </Text>
+                    </View>
+                  </View>
+                );
+              })}
             </View>
           </>
         ) : null}
@@ -208,12 +259,8 @@ function makeStyles(theme) {
       alignItems: "center",
       justifyContent: "space-between",
     },
-    sourceUrl: {
-      fontFamily: font.mono,
-      fontSize: 14,
-      lineHeight: 20,
-      color: color.ink,
-      marginTop: 8,
+    videoHeader: {
+      marginTop: 12,
     },
     divider: {
       height: 1,
@@ -225,10 +272,14 @@ function makeStyles(theme) {
       alignItems: "center",
       marginBottom: 20,
     },
+    composition: {
+      marginBottom: 24,
+    },
+    // Left-accent + tint are set inline from the guess delta.
     guessCompare: {
-      backgroundColor: color.surface,
       borderWidth: 1,
       borderColor: color.border,
+      borderLeftWidth: 2,
       borderRadius: radius.md,
       padding: 16,
       gap: 6,
@@ -284,6 +335,19 @@ function makeStyles(theme) {
     flaggedText: {
       ...type.body,
       flex: 1,
+    },
+    flagChip: {
+      alignSelf: "flex-start",
+      overflow: "hidden",
+      borderRadius: radius.sm,
+      paddingHorizontal: 8,
+      paddingVertical: 4,
+    },
+    flagChipText: {
+      fontFamily: font.monoBold,
+      fontSize: 10,
+      letterSpacing: 1,
+      color: "#FFFFFF",
     },
     checklist: {
       marginBottom: 28,
