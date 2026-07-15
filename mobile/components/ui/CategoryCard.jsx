@@ -2,13 +2,18 @@ import { useMemo } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import GradientBlob from "./GradientBlob";
 import { useTheme } from "../../context/ThemeContext";
-import { LEVEL_LABELS } from "../../lib/riskLevels";
 
 // One comment category, shown two ways from the same component:
-// with `percent` (+ optional `level`) it's a result card on the analysis
-// screen; without them it's the compact explainer used on the landing page.
-// `categoryKey` always drives the stamp chip's holographic color so the same
-// category reads consistently in both places.
+// with `percent` it's a result card on the analysis screen; without it, the
+// compact explainer used on the landing page. `categoryKey` always drives the
+// stamp chip's holographic color so the same category reads consistently in
+// both places.
+//
+// The share is shown as a proportional mini bar, not a Low/Medium/High badge:
+// almost every real video landed in the old 10–25% "Medium" band, so three of
+// four cards said the same word — and a categorical verdict ("HIGH") is an
+// authority claim the weak-supervised model can't back. A bar just shows the
+// proportion; 18% vs 25% becomes visible without Kratt pronouncing judgment.
 export default function CategoryCard({
   categoryKey,
   seed = 0,
@@ -16,13 +21,17 @@ export default function CategoryCard({
   label,
   description,
   percent,
-  level,
+  neutral = false,
   style,
 }) {
   const theme = useTheme();
   const styles = useMemo(() => makeStyles(theme), [theme]);
-  const palette = level ? theme.risk[level] : null;
   const showData = typeof percent === "number";
+
+  // Genuine keeps a muted bar + caption: a healthy share, not a bot signal.
+  const barColor = neutral
+    ? theme.risk.neutral.main
+    : (theme.gradients[categoryKey] ?? theme.gradients.brand)[0];
 
   return (
     <View style={[styles.card, style]}>
@@ -41,12 +50,22 @@ export default function CategoryCard({
       <Text style={styles.label}>{label}</Text>
       <Text style={styles.description}>{description}</Text>
 
-      {showData && level ? (
-        <View style={styles.levelRow}>
-          <View style={[styles.levelDot, { backgroundColor: palette.main }]} />
-          <Text style={[styles.levelText, { color: palette.text }]}>
-            {LEVEL_LABELS[level]}
-          </Text>
+      {showData ? (
+        <View style={styles.shareBlock}>
+          <View style={styles.track}>
+            <View
+              style={[
+                styles.fill,
+                {
+                  width: `${Math.min(percent, 100)}%`,
+                  backgroundColor: barColor,
+                },
+              ]}
+            />
+          </View>
+          {neutral ? (
+            <Text style={styles.neutralNote}>Not a bot signal</Text>
+          ) : null}
         </View>
       ) : null}
     </View>
@@ -94,21 +113,24 @@ function makeStyles(theme) {
     description: {
       ...type.small,
     },
-    levelRow: {
-      flexDirection: "row",
-      alignItems: "center",
-      gap: 7,
+    shareBlock: {
       marginTop: "auto",
       paddingTop: 14,
+      gap: 6,
     },
-    levelDot: {
-      width: 7,
-      height: 7,
-      borderRadius: 3.5,
+    track: {
+      height: 6,
+      borderRadius: 3,
+      backgroundColor: color.surfaceAlt,
+      overflow: "hidden",
     },
-    levelText: {
-      fontFamily: font.sansBold,
-      fontSize: 13,
+    fill: {
+      height: "100%",
+      borderRadius: 3,
+    },
+    neutralNote: {
+      ...type.small,
+      color: color.inkFaint,
     },
   });
 }

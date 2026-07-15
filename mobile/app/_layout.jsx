@@ -1,6 +1,12 @@
+import { useMemo } from "react";
 import { View } from "react-native";
 import { Stack, usePathname } from "expo-router";
 import Head from "expo-router/head";
+import {
+  ThemeProvider as NavigationThemeProvider,
+  DarkTheme as NavDarkTheme,
+  DefaultTheme as NavDefaultTheme,
+} from "@react-navigation/native";
 import {
   useFonts,
   ZillaSlab_500Medium,
@@ -15,12 +21,27 @@ import {
   SpaceMono_700Bold,
 } from "@expo-google-fonts/space-mono";
 import { AnalysisProvider } from "../context/AnalysisContext";
-import { ThemeProvider, useTheme } from "../context/ThemeContext";
+import {
+  ThemeProvider,
+  useTheme,
+  useThemeMode,
+} from "../context/ThemeContext";
 import ConstellationBackground from "../components/ui/ConstellationBackground";
 
 function RootNavigator() {
   const { color } = useTheme();
+  const { mode } = useThemeMode();
   const pathname = usePathname();
+
+  // contentStyle below only clears each screen's content view — the navigator
+  // itself paints colors.background from the React Navigation theme (light
+  // grey #F2F2F2 by default) over everything behind it. Left unset, that
+  // covered the root View's dark bg and the constellation, making dark mode
+  // render white-on-white.
+  const navTheme = useMemo(() => {
+    const base = mode === "dark" ? NavDarkTheme : NavDefaultTheme;
+    return { ...base, colors: { ...base.colors, background: "transparent" } };
+  }, [mode]);
 
   return (
     // The root View owns the background color and the constellation is
@@ -30,12 +51,14 @@ function RootNavigator() {
     // transparent too, or the navigator would paint over the particles.
     <View style={{ flex: 1, backgroundColor: color.bg }}>
       <ConstellationBackground density={pathname === "/" ? 1 : 0.45} />
-      <Stack
-        screenOptions={{
-          headerShown: false,
-          contentStyle: { backgroundColor: "transparent" },
-        }}
-      />
+      <NavigationThemeProvider value={navTheme}>
+        <Stack
+          screenOptions={{
+            headerShown: false,
+            contentStyle: { backgroundColor: "transparent" },
+          }}
+        />
+      </NavigationThemeProvider>
     </View>
   );
 }

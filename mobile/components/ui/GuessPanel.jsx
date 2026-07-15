@@ -1,16 +1,18 @@
 // Pre-reveal guess step: before the analysis screen shows Kratt's score, the
 // user commits their own estimate of how bot-heavy the comment section is.
 // Feeling the gap between instinct and evidence is the point — so this panel
-// must never leak the real result.
+// must never leak the real result. `status` is a plain process caption
+// ("Pulling comments…") passed in from the analyzing screen; the panel never
+// receives the analysis result itself.
 import { useMemo, useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 import Slider from "@react-native-community/slider";
 import { useTheme } from "../../context/ThemeContext";
 import { accent } from "../../theme/themes";
 import PillButton from "./PillButton";
 import GradientBlob from "./GradientBlob";
 
-export default function GuessPanel({ onSubmit }) {
+export default function GuessPanel({ onSubmit, status = null }) {
   const theme = useTheme();
   const styles = useMemo(() => makeStyles(theme), [theme]);
   const [value, setValue] = useState(50);
@@ -26,8 +28,8 @@ export default function GuessPanel({ onSubmit }) {
       <Text style={theme.type.monoLabel}>BEFORE YOU SEE THE SCORE</Text>
       <Text style={styles.title}>What&apos;s your guess?</Text>
       <Text style={styles.body}>
-        The analysis is done. Before Kratt shows its number — how much of this
-        comment section do you think is bot activity?
+        Kratt is reading the comment section right now. Before you see its
+        number — how much of this comment section do you think is bot activity?
       </Text>
 
       <Text style={styles.value}>{value}%</Text>
@@ -46,6 +48,16 @@ export default function GuessPanel({ onSubmit }) {
       <View style={styles.scaleRow}>
         <Text style={styles.scaleText}>0% — all human</Text>
         <Text style={styles.scaleText}>100% — all bots</Text>
+      </View>
+
+      {/* Fixed-height slot so the caption never reflows the button. */}
+      <View style={styles.statusRow}>
+        {status ? (
+          <>
+            <ActivityIndicator size="small" color={theme.color.inkFaint} />
+            <Text style={styles.statusText}>{status}</Text>
+          </>
+        ) : null}
       </View>
 
       <PillButton
@@ -96,9 +108,20 @@ function makeStyles(theme) {
       flexDirection: "row",
       justifyContent: "space-between",
       marginTop: 4,
-      marginBottom: 28,
+      marginBottom: 16,
     },
     scaleText: {
+      ...type.small,
+    },
+    statusRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: 8,
+      minHeight: 24,
+      marginBottom: 16,
+    },
+    statusText: {
       ...type.small,
     },
     button: {

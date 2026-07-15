@@ -109,6 +109,13 @@ export default function HomeScreen() {
       behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
       <ThemedStatusBar />
+      <PillButton
+        label="← Home"
+        variant="secondary"
+        size="sm"
+        onPress={() => router.push("/")}
+        style={styles.homeButton}
+      />
       <ThemeToggle style={styles.toggle} />
       <View
         style={[
@@ -205,6 +212,14 @@ function makeStyles(theme) {
       position: "absolute",
       top: 20,
       right: 20,
+      zIndex: 10,
+    },
+    // Mirrors the theme toggle in the opposite corner — the way back to the
+    // landing page.
+    homeButton: {
+      position: "absolute",
+      top: 20,
+      left: 20,
       zIndex: 10,
     },
     content: {

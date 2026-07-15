@@ -45,11 +45,23 @@ function errorResponse(code) {
   return { ok: false, error: { error: code, message: ERROR_MESSAGES[code] } };
 }
 
-export function mockAnalyze(videoUrl) {
+export function mockAnalyze(videoUrl, { signal } = {}) {
   const url = (videoUrl ?? "").trim();
 
-  return new Promise((resolve) => {
-    setTimeout(() => {
+  return new Promise((resolve, reject) => {
+    // AbortError via a plain Error: DOMException isn't a given on native.
+    const abortError = () => {
+      const err = new Error("Analysis aborted");
+      err.name = "AbortError";
+      return err;
+    };
+
+    if (signal?.aborted) {
+      reject(abortError());
+      return;
+    }
+
+    const timer = setTimeout(() => {
       if (!isValidYouTubeUrl(url)) {
         resolve(errorResponse("invalid_url"));
         return;
@@ -65,5 +77,10 @@ export function mockAnalyze(videoUrl) {
 
       resolve({ ok: true, data: MOCK_SUCCESS_RESPONSE });
     }, MOCK_DELAY_MS);
+
+    signal?.addEventListener("abort", () => {
+      clearTimeout(timer);
+      reject(abortError());
+    });
   });
 }
