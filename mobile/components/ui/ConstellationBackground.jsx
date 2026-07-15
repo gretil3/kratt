@@ -143,14 +143,6 @@ export default function ConstellationBackground({ density = 1 }) {
         {particles.map((p, i) => (
           <Circle key={i} cx={p.x} cy={p.y} r={p.r} fill={particleColor} />
         ))}
-        {mouse ? (
-          <Circle
-            cx={mouse.x}
-            cy={mouse.y}
-            r={3}
-            fill={`rgba(${MOUSE_LINK_RGB},0.9)`}
-          />
-        ) : null}
       </Svg>
     </View>
   );
