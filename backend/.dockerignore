@@ -1,0 +1,11 @@
+venv/
+__pycache__/
+*.pyc
+.env
+.env.example
+notebooks/
+scripts/scrape_comments.py
+scripts/*.bat
+*.csv
+*.ipynb
+model_cache/

@@ -1,0 +1,15 @@
+# Runtime deps for the FastAPI service (app/) ONLY -- NOT the training/labeling
+# notebooks, which need pandas/numpy/scikit-learn/emoji/wordfreq/accelerate (see
+# ../requirements.txt for those). Keep versions in sync with requirements.txt
+# manually -- this file intentionally does not import from it.
+#
+# torch is NOT listed here on purpose: the Dockerfile installs it separately
+# from the PyTorch CPU-only index. Adding it here would let pip re-resolve it
+# from the default PyPI index instead, pulling the multi-GB CUDA build that
+# only exists to slow down a CPU-only deploy image.
+fastapi==0.115.0
+uvicorn[standard]==0.30.6
+pydantic==2.9.2
+python-dotenv==1.0.1
+google-api-python-client==2.144.0
+transformers==4.44.2
