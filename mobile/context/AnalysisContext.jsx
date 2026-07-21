@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useState } from "react";
-import { mockAnalyze } from "../lib/mockApi";
+import { analyze } from "../lib/api";
 import { appendHistoryEntry } from "../lib/history";
 import { canonicalUrl, parseVideoId } from "../lib/youtube";
 
@@ -18,7 +18,7 @@ export function AnalysisProvider({ children }) {
     setResult(null);
     setGuess(null);
 
-    const response = await mockAnalyze(url);
+    const response = await analyze(url);
 
     if (response.ok) {
       setResult(response.data);
