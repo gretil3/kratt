@@ -9,6 +9,8 @@ Run locally:
 
 Implements POST /analyze per docs/api-contract.md.
 """
+from contextlib import asynccontextmanager
+
 from dotenv import load_dotenv
 
 load_dotenv()  # read backend/.env before anything reads settings
@@ -19,10 +21,22 @@ from fastapi.responses import JSONResponse  # noqa: E402
 
 from . import errors  # noqa: E402
 from .config import settings  # noqa: E402
+from .model import classifier  # noqa: E402
 from .schemas import AnalyzeRequest, AnalyzeResponse, ErrorResponse  # noqa: E402
 from .pipeline import analyze  # noqa: E402
 
-app = FastAPI(title="Kratt API")
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Using the `lifespan` API (not the deprecated @app.on_event("startup"))
+    # so this doesn't depend on the on_startup/on_shutdown routing kwargs that
+    # broke entirely on a mismatched fastapi/starlette pair during dev here.
+    if settings.enable_bert and settings.warm_up_model:
+        classifier.warm_up()
+    yield
+
+
+app = FastAPI(title="Kratt API", lifespan=lifespan)
 
 _origins = ["*"] if settings.cors_origins.strip() == "*" else [
     o.strip() for o in settings.cors_origins.split(",") if o.strip()

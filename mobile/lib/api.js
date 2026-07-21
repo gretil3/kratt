@@ -13,8 +13,8 @@ const API_URL = (process.env.EXPO_PUBLIC_API_BASE_URL ?? "http://localhost:8000"
 const USE_MOCK = ["1", "true", "yes"].includes(
   String(process.env.EXPO_PUBLIC_USE_MOCK ?? "").toLowerCase()
 );
-// BERT on CPU can take a while; the analyzing screen is built for a real wait.
-const REQUEST_TIMEOUT_MS = 120000;
+// BERT on CPU can take a while, especially with many comments (20k+ takes ~8 min).
+const REQUEST_TIMEOUT_MS = 600_000; // 10 minutes
 
 function errorResponse(code) {
   return {
@@ -23,7 +23,9 @@ function errorResponse(code) {
   };
 }
 
-export async function analyze(videoUrl) {
+// `externalSignal` lets a caller (AnalysisContext's cancelAnalysis) cancel the
+// request early, e.g. when the user navigates away mid-analysis.
+export async function analyze(videoUrl, externalSignal) {
   if (USE_MOCK) return mockAnalyze(videoUrl);
 
   const url = (videoUrl ?? "").trim();
@@ -33,6 +35,8 @@ export async function analyze(videoUrl) {
 
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+  const onExternalAbort = () => controller.abort();
+  externalSignal?.addEventListener("abort", onExternalAbort);
   try {
     const res = await fetch(`${API_URL}/analyze`, {
       method: "POST",
@@ -55,9 +59,14 @@ export async function analyze(videoUrl) {
     }
     return errorResponse("internal_error");
   } catch (_e) {
-    // network failure, timeout/abort, or unparseable response
+    if (externalSignal?.aborted) {
+      // caller cancelled on purpose -- not a real failure, don't show an error
+      return { ok: false, cancelled: true };
+    }
+    // network failure, timeout, or unparseable response
     return errorResponse("internal_error");
   } finally {
     clearTimeout(timer);
+    externalSignal?.removeEventListener("abort", onExternalAbort);
   }
 }

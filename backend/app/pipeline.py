@@ -21,14 +21,14 @@ from .youtube import _client, fetch_comments, fetch_video_meta, parse_video_id
 CATEGORIES = ("ads_spam", "copy_paste", "low_effort", "genuine")
 
 
-def _bucket_of(idx, comment, dup_counts, bert_labels) -> str:
+def _bucket_of(idx, comment, dup_counts, bert_probs, bot_threshold) -> str:
     text = comment["text"]
     if rules.is_ads_spam(text):
         return "ads_spam"
     if rules.is_copy_paste(text, dup_counts):
         return "copy_paste"
-    if bert_labels is not None:
-        return "genuine" if bert_labels[idx] == "authentic" else "low_effort"
+    if bert_probs is not None:
+        return "genuine" if bert_probs[idx] >= bot_threshold else "low_effort"
     # BERT unavailable -> heuristic genuine/low_effort split
     return "low_effort" if rules.is_low_effort_fallback(text) else "genuine"
 
@@ -78,16 +78,21 @@ def analyze(video_url: str) -> AnalyzeResponse:
     dup_counts = rules.duplicate_counts(c["text"] for c in comments)
 
     # BERT: score each comment (None if the model couldn't load -> rules-only)
-    bert_labels = None
+    bert_probs = None
     if settings.enable_bert:
         model_texts = [
             build_model_text(c["text"], niche, c["like_count"], c["reply_count"])
             for c in comments
         ]
-        bert_labels = classifier.predict(model_texts)
+        try:
+            bert_probs = classifier.predict_proba(model_texts)
+        except Exception as exc:
+            print(f"[kratt] BERT inference failed ({type(exc).__name__}: {exc}) "
+                  f"— falling back to rules-only for {len(comments)} comments.")
+            bert_probs = None
 
     buckets = [
-        _bucket_of(i, c, dup_counts, bert_labels)
+        _bucket_of(i, c, dup_counts, bert_probs, settings.bot_threshold)
         for i, c in enumerate(comments)
     ]
     buckets = refine_ambiguous(comments, buckets, None)  # optional LLM pass (stub)
