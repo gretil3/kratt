@@ -1,7 +1,8 @@
-// Ambient constellation effect behind the whole landing page: particles
-// drift slowly and link to nearby neighbors; on web, particles near the
-// cursor also link to it for a hover-reactive feel. Decorative only —
-// pointerEvents "none" so it never blocks taps/clicks on real content.
+// Ambient constellation effect mounted once behind the whole app (see
+// app/_layout.jsx): particles drift slowly and link to nearby neighbors; on
+// web, particles near the cursor also link to it for a hover-reactive feel.
+// Decorative only — pointerEvents "none" so it never blocks taps/clicks on
+// real content.
 import { useEffect, useRef, useState } from "react";
 import { Platform, StyleSheet, View, useWindowDimensions } from "react-native";
 import Svg, { Circle, Line } from "react-native-svg";
@@ -28,7 +29,12 @@ function makeParticles(count, width, height) {
   return particles;
 }
 
-export default function ConstellationBackground() {
+// `density` scales the particle count (0..1). The landing page runs at 1 —
+// it's a marketing surface, so a dense field is atmosphere. App screens run
+// thinner: the neighbor-linking pass is O(n²) every 45ms, and behind real
+// content (forms, scores, evidence) dense particles read as noise while also
+// costing frames on low-end phones.
+export default function ConstellationBackground({ density = 1 }) {
   const { width, height } = useWindowDimensions();
   const { color } = useTheme();
   const particleColor = color.particle;
@@ -39,9 +45,11 @@ export default function ConstellationBackground() {
 
   useEffect(() => {
     sizeRef.current = { width, height };
-    const count = Math.min(MAX_PARTICLES, Math.round((width * height) / 20000));
+    const count = Math.round(
+      Math.min(MAX_PARTICLES, (width * height) / 20000) * density
+    );
     particlesRef.current = makeParticles(count, width, height);
-  }, [width, height]);
+  }, [width, height, density]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -60,7 +68,8 @@ export default function ConstellationBackground() {
   }, []);
 
   useEffect(() => {
-    if (Platform.OS !== "web" || typeof window === "undefined") return undefined;
+    if (Platform.OS !== "web" || typeof window === "undefined")
+      return undefined;
     const handleMove = (e) => {
       mouseRef.current = { x: e.clientX, y: e.clientY };
     };
@@ -134,9 +143,6 @@ export default function ConstellationBackground() {
         {particles.map((p, i) => (
           <Circle key={i} cx={p.x} cy={p.y} r={p.r} fill={particleColor} />
         ))}
-        {mouse ? (
-          <Circle cx={mouse.x} cy={mouse.y} r={3} fill={`rgba(${MOUSE_LINK_RGB},0.9)`} />
-        ) : null}
       </Svg>
     </View>
   );

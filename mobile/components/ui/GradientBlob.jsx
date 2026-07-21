@@ -4,7 +4,13 @@
 // category always renders the same blob.
 import { useMemo, useRef } from "react";
 import { StyleSheet, View } from "react-native";
-import Svg, { Defs, RadialGradient, Stop, Rect, Ellipse } from "react-native-svg";
+import Svg, {
+  Defs,
+  RadialGradient,
+  Stop,
+  Rect,
+  Ellipse,
+} from "react-native-svg";
 
 let instanceCounter = 0;
 
@@ -30,13 +36,21 @@ export default function GradientBlob({ colors, seed = 0, style, radius = 0 }) {
   const uid = useRef(`gb${++instanceCounter}`).current;
   const layout = LAYOUTS[Math.abs(seed) % LAYOUTS.length];
   const [c1, c2, c3] = useMemo(
-    () => (colors && colors.length === 3 ? colors : ["#7C5CFF", "#2FE6C8", "#08080B"]),
+    () =>
+      colors && colors.length === 3
+        ? colors
+        : ["#7C5CFF", "#2FE6C8", "#08080B"],
     [colors]
   );
 
   return (
     <View style={[styles.wrap, { borderRadius: radius }, style]}>
-      <Svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice">
+      <Svg
+        width="100%"
+        height="100%"
+        viewBox="0 0 100 100"
+        preserveAspectRatio="xMidYMid slice"
+      >
         <Defs>
           <RadialGradient id={`${uid}a`} cx="50%" cy="50%" r="60%">
             <Stop offset="0%" stopColor={c1} stopOpacity="0.95" />
