@@ -17,6 +17,27 @@ describe("mockAnalyze", () => {
     await expect(promise).resolves.toMatchObject({ ok: true });
   });
 
+  // Contract shape (docs/api-contract.md): sample_flagged_comments is a list of
+  // { text, category } objects, where category is the backend's computed
+  // category — never a bare string, and never `genuine` (only flagged
+  // comments appear here). The result screen renders category directly.
+  test("ships sample_flagged_comments as { text, category } objects", async () => {
+    const promise = mockAnalyze(VALID_URL);
+    jest.runAllTimers();
+    const response = await promise;
+
+    const samples = response.data.sample_flagged_comments;
+    expect(Array.isArray(samples)).toBe(true);
+    expect(samples.length).toBeGreaterThan(0);
+
+    const flaggedCategories = ["ads_spam", "copy_paste", "low_effort"];
+    for (const sample of samples) {
+      expect(typeof sample.text).toBe("string");
+      expect(sample.text.length).toBeGreaterThan(0);
+      expect(flaggedCategories).toContain(sample.category);
+    }
+  });
+
   test("resolves invalid_url for a non-YouTube URL", async () => {
     const promise = mockAnalyze("https://vimeo.com/12345");
     jest.runAllTimers();

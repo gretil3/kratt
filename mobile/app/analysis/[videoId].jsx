@@ -23,7 +23,6 @@ import ThemeToggle from "../../components/ui/ThemeToggle";
 import ThemedStatusBar from "../../components/ui/ThemedStatusBar";
 import VideoHeader from "../../components/ui/VideoHeader";
 import { CATEGORIES } from "../../lib/categories";
-import { flagReasonFor } from "../../lib/flagReasons";
 import { canonicalUrl, parseVideoId } from "../../lib/youtube";
 import { accent } from "../../theme/themes";
 
@@ -38,7 +37,7 @@ const STAMP_BY_KEY = Object.fromEntries(
  * @property {number} bot_percentage 0–100, `100 - breakdown.genuine`
  * @property {{ads_spam: number, copy_paste: number, low_effort: number, genuine: number}} breakdown percentages, sum ~100
  * @property {number} total_comments_analyzed
- * @property {string[]} sample_flagged_comments
+ * @property {{text: string, category: string}[]} sample_flagged_comments each flagged sample plus the backend's computed category
  */
 
 // One neutral, non-lecturing sentence about the gap between instinct and
@@ -193,15 +192,15 @@ export default function AnalysisScreen() {
             </Text>
             <View style={styles.flaggedList}>
               {sample_flagged_comments.map((comment, index) => {
-                // Category chip via a client-side heuristic (lib/flagReasons)
-                // until the contract carries a category per sample comment.
-                const reasonKey = flagReasonFor(comment);
+                // The backend ships the category it computed for each flagged
+                // comment (docs/api-contract.md) — render it directly.
+                const reasonKey = comment.category;
                 return (
                   <View key={index} style={styles.flaggedRow}>
                     <Text style={styles.flaggedIndex}>
                       #{String(index + 1).padStart(2, "0")}
                     </Text>
-                    <Text style={styles.flaggedText}>“{comment}”</Text>
+                    <Text style={styles.flaggedText}>“{comment.text}”</Text>
                     <View style={styles.flagChip}>
                       <GradientBlob
                         colors={
@@ -211,7 +210,7 @@ export default function AnalysisScreen() {
                         style={StyleSheet.absoluteFill}
                       />
                       <Text style={styles.flagChipText}>
-                        {STAMP_BY_KEY[reasonKey]}
+                        {STAMP_BY_KEY[reasonKey] ?? reasonKey}
                       </Text>
                     </View>
                   </View>

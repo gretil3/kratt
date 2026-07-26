@@ -16,9 +16,15 @@ const MOCK_SUCCESS_RESPONSE = {
     genuine: 33,
   },
   total_comments_analyzed: 1214,
+  // Each flagged sample carries the category the backend assigned during
+  // scoring (per docs/api-contract.md) — the UI renders it directly rather
+  // than re-guessing from the text.
   sample_flagged_comments: [
-    "Great content sir, check my page for free crypto",
-    "First!!!!",
+    {
+      text: "Great content sir, check my page for free crypto",
+      category: "ads_spam",
+    },
+    { text: "First!!!!", category: "low_effort" },
   ],
 };
 

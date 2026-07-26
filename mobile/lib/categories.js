@@ -12,7 +12,7 @@ export const CATEGORIES = [
     key: "copy_paste",
     stamp: "DUP",
     label: "Copy-paste",
-    description: "Near-identical comments across many videos",
+    description: "Duplicate comments within this video's comment section",
   },
   {
     key: "low_effort",

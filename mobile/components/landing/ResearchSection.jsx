@@ -20,7 +20,7 @@ export default function ResearchSection() {
       <Text style={styles.paragraph}>
         These categories draw on signals commonly used in research on
         inauthentic behavior across major platforms — repetitive language
-        patterns, duplication across accounts and videos, and the telltale
+        patterns, duplicated and copy-pasted comments, and the telltale
         structure of promotional messages. Every comment is sorted into one
         category, and the bot score is simply the share of comments that
         don&apos;t read as genuine.
