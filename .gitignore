@@ -224,3 +224,7 @@ __marimo__/
 # Scraped data (contains real comment text, don't commit)
 backend/scripts/videos_to_scrape.csv
 backend/scripts/raw_comments.csv
+
+# Throwaway single-commit snapshot used to push backend/ to the HF Space
+# (git subtree is broken on this repo's history, see backend/README.md)
+.space-deploy/

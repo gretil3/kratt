@@ -1,11 +1,5 @@
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useRef,
-  useState,
-} from "react";
-import { mockAnalyze } from "../lib/mockApi";
+import { createContext, useCallback, useContext, useRef, useState } from "react";
+import { analyze } from "../lib/api";
 import { appendHistoryEntry } from "../lib/history";
 import { canonicalUrl, parseVideoId } from "../lib/youtube";
 
@@ -38,18 +32,12 @@ export function AnalysisProvider({ children }) {
       setResult(null);
       setGuess(null);
 
-      let response;
-      try {
-        response = await mockAnalyze(url, { signal: controller.signal });
-      } catch (err) {
-        if (err?.name === "AbortError") {
-          // Not an error state: whichever screen cancelled has already
-          // navigated away, so nothing here should push to /error.
-          return { ok: false, aborted: true };
-        }
-        throw err;
-      } finally {
-        if (abortRef.current === controller) abortRef.current = null;
+      const response = await analyze(url, controller.signal);
+
+      if (response.cancelled) {
+        // cancelAnalysis() fired (e.g. the user navigated away) -- the caller
+        // has already moved on, so don't touch state for a stale request.
+        return { ok: false, cancelled: true };
       }
 
       if (response.ok) {
