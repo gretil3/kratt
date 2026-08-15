@@ -14,8 +14,8 @@ import {
 } from "react-native";
 import { useTheme } from "../../context/ThemeContext";
 
-// Placeholder walkthrough clip — swap for the real Kratt demo/trailer later.
-const DEMO_VIDEO_ID = "dQw4w9WgXcQ";
+// Kratt demo walkthrough clip.
+const DEMO_VIDEO_ID = "nFClzElhrpE";
 
 export default function VideoFrame({ style }) {
   const theme = useTheme();
@@ -40,7 +40,7 @@ export default function VideoFrame({ style }) {
         {Platform.OS === "web" ? (
           createElement("iframe", {
             src: `https://www.youtube.com/embed/${DEMO_VIDEO_ID}`,
-            title: "Kratt walkthrough (placeholder)",
+            title: "Kratt walkthrough",
             style: {
               width: "100%",
               height: "100%",
