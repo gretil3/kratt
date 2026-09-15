@@ -15,7 +15,7 @@ from .llm_pass import refine_ambiguous
 from .model import classifier
 from .niche import determine_niche
 from .preprocess import build_model_text
-from .schemas import AnalyzeResponse, Breakdown
+from .schemas import AnalyzeResponse, Breakdown, FlaggedComment
 from .youtube import _client, fetch_comments, fetch_video_meta, parse_video_id
 
 CATEGORIES = ("ads_spam", "copy_paste", "low_effort", "genuine")
@@ -33,10 +33,18 @@ def _bucket_of(idx, comment, dup_counts, bert_probs, bot_threshold) -> str:
     return "low_effort" if rules.is_low_effort_fallback(text) else "genuine"
 
 
-def _pick_samples(comments, buckets, limit) -> list[str]:
-    """A few flagged (non-genuine) comments, spread across buckets, de-duped."""
+def _truncate(text: str) -> str:
+    return text if len(text) <= 200 else text[:197] + "..."
+
+
+def _pick_samples(comments, buckets, limit) -> list[FlaggedComment]:
+    """A few flagged (non-genuine) comments, spread across buckets, de-duped.
+
+    Each pick carries the bucket the pipeline assigned it (docs/api-contract.md):
+    the UI renders that category directly rather than re-deriving it from text.
+    """
     seen: set[str] = set()
-    picks: list[str] = []
+    picks: list[FlaggedComment] = []
     # round-robin the flagged categories so evidence is varied
     for cat in ("ads_spam", "copy_paste", "low_effort"):
         for c, b in zip(comments, buckets):
@@ -47,7 +55,7 @@ def _pick_samples(comments, buckets, limit) -> list[str]:
             if not text or key in seen:
                 continue
             seen.add(key)
-            picks.append(text if len(text) <= 200 else text[:197] + "...")
+            picks.append(FlaggedComment(text=_truncate(text), category=cat))
             break
     # top up to the limit with any remaining flagged comments
     for c, b in zip(comments, buckets):
@@ -60,7 +68,7 @@ def _pick_samples(comments, buckets, limit) -> list[str]:
         if not text or key in seen:
             continue
         seen.add(key)
-        picks.append(text if len(text) <= 200 else text[:197] + "...")
+        picks.append(FlaggedComment(text=_truncate(text), category=b))
     return picks[:limit]
 
 

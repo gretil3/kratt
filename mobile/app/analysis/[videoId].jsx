@@ -1,5 +1,6 @@
 import { useEffect, useMemo } from "react";
 import {
+  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -93,6 +94,18 @@ export default function AnalysisScreen() {
     sample_flagged_comments,
   } = result;
 
+  // Temporary: shows what this screen actually received, so a data problem
+  // (list differs from the [kratt-api] log) can be told apart from a rendering
+  // problem (list matches, but the rows look wrong on screen).
+  console.log(`[kratt-render][${Platform.OS}] evidence list`, {
+    videoId,
+    bot_percentage,
+    sampleCount: sample_flagged_comments?.length,
+    samples: sample_flagged_comments?.map(
+      (c, i) => `${i + 1}. [${c?.category}] ${c?.text}`
+    ),
+  });
+
   const twoColumns = width >= 400;
 
   // Agreement threshold matches reflectionFor: within 10 points is "close".
@@ -184,7 +197,7 @@ export default function AnalysisScreen() {
           })}
         </View>
 
-        {sample_flagged_comments.length > 0 ? (
+        {sample_flagged_comments?.length > 0 ? (
           <>
             <Text style={[theme.type.monoLabel, styles.sectionLabel]}>
               SAMPLE OF FLAGGED COMMENTS — {sample_flagged_comments.length} OF ~
@@ -201,18 +214,23 @@ export default function AnalysisScreen() {
                       #{String(index + 1).padStart(2, "0")}
                     </Text>
                     <Text style={styles.flaggedText}>“{comment.text}”</Text>
-                    <View style={styles.flagChip}>
-                      <GradientBlob
-                        colors={
-                          theme.gradients[reasonKey] ?? theme.gradients.brand
-                        }
-                        seed={index}
-                        style={StyleSheet.absoluteFill}
-                      />
-                      <Text style={styles.flagChipText}>
-                        {STAMP_BY_KEY[reasonKey] ?? reasonKey}
-                      </Text>
-                    </View>
+                    {/* No category means a backend on the pre-2026-07-26
+                        contract (see lib/api.js). Drop the chip rather than
+                        render an empty gradient pill with no label in it. */}
+                    {reasonKey ? (
+                      <View style={styles.flagChip}>
+                        <GradientBlob
+                          colors={
+                            theme.gradients[reasonKey] ?? theme.gradients.brand
+                          }
+                          seed={index}
+                          style={StyleSheet.absoluteFill}
+                        />
+                        <Text style={styles.flagChipText}>
+                          {STAMP_BY_KEY[reasonKey] ?? reasonKey}
+                        </Text>
+                      </View>
+                    ) : null}
                   </View>
                 );
               })}
