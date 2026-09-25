@@ -1,21 +1,9 @@
-// Browser-chrome-style frame around a demo video. Real <iframe> embed on
-// web (React Native Web renders plain DOM tags fine via createElement); on
-// native, no embeddable player is wired up yet, so it falls back to a
-// thumbnail + play button that opens the video in the browser/YouTube app.
-import { createElement, useMemo } from "react";
-import {
-  Image,
-  Linking,
-  Platform,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+// Browser-chrome-style frame around the Kratt demo clip. Bundled locally
+// and autoplays muted on loop (muted is what lets browsers autoplay).
+import { useMemo } from "react";
+import { StyleSheet, Text, View } from "react-native";
+import { ResizeMode, Video } from "expo-av";
 import { useTheme } from "../../context/ThemeContext";
-
-// Kratt demo walkthrough clip.
-const DEMO_VIDEO_ID = "nFClzElhrpE";
 
 export default function VideoFrame({ style }) {
   const theme = useTheme();
@@ -37,43 +25,16 @@ export default function VideoFrame({ style }) {
       </View>
 
       <View style={styles.player}>
-        {Platform.OS === "web" ? (
-          createElement("iframe", {
-            src: `https://www.youtube.com/embed/${DEMO_VIDEO_ID}`,
-            title: "Kratt walkthrough",
-            style: {
-              width: "100%",
-              height: "100%",
-              border: 0,
-              display: "block",
-            },
-            allow:
-              "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture",
-            allowFullScreen: true,
-          })
-        ) : (
-          <Pressable
-            style={styles.nativeFallback}
-            onPress={() =>
-              Linking.openURL(
-                `https://www.youtube.com/watch?v=${DEMO_VIDEO_ID}`
-              )
-            }
-          >
-            <Image
-              source={{
-                uri: `https://img.youtube.com/vi/${DEMO_VIDEO_ID}/hqdefault.jpg`,
-              }}
-              style={StyleSheet.absoluteFill}
-              resizeMode="cover"
-            />
-            <View style={styles.scrim} />
-            <View style={styles.playButton}>
-              <Text style={styles.playIcon}>▶</Text>
-            </View>
-            <Text style={styles.nativeFallbackText}>Watch the walkthrough</Text>
-          </Pressable>
-        )}
+        <Video
+          source={require("../../assets/kratt-demo.mp4")}
+          style={StyleSheet.absoluteFill}
+          // web <video> otherwise renders at intrinsic 1920x1080 and crops
+          videoStyle={{ width: "100%", height: "100%" }}
+          resizeMode={ResizeMode.COVER}
+          shouldPlay
+          isLooping
+          isMuted
+        />
       </View>
     </View>
   );
@@ -125,34 +86,6 @@ function makeStyles(theme) {
       width: "100%",
       aspectRatio: 16 / 9,
       backgroundColor: "#000000",
-    },
-    nativeFallback: {
-      flex: 1,
-      alignItems: "center",
-      justifyContent: "center",
-      gap: 12,
-    },
-    scrim: {
-      ...StyleSheet.absoluteFillObject,
-      backgroundColor: "rgba(0,0,0,0.35)",
-    },
-    playButton: {
-      width: 56,
-      height: 56,
-      borderRadius: 28,
-      backgroundColor: "rgba(255,255,255,0.92)",
-      alignItems: "center",
-      justifyContent: "center",
-    },
-    playIcon: {
-      fontSize: 20,
-      color: "#0A0A0C",
-      marginLeft: 3,
-    },
-    nativeFallbackText: {
-      fontFamily: font.sansBold,
-      fontSize: 13,
-      color: "#FFFFFF",
     },
   });
 }
