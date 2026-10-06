@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useEffect } from "react";
 import {
   Platform,
   ScrollView,
@@ -14,23 +14,24 @@ import {
 } from "expo-router";
 import { useAnalysis } from "../../context/AnalysisContext";
 import { useTheme } from "../../context/ThemeContext";
-import PillButton from "../../components/ui/PillButton";
+import Button from "../../components/ui/Button";
 import CategoryCard from "../../components/ui/CategoryCard";
-import CompositionBar from "../../components/ui/CompositionBar";
-import GradientBlob from "../../components/ui/GradientBlob";
-import ScoreGauge from "../../components/ui/ScoreGauge";
 import SourceChecklist from "../../components/ui/SourceChecklist";
-import ThemeToggle from "../../components/ui/ThemeToggle";
+import Stamp from "../../components/ui/Stamp";
+import StrawBar from "../../components/ui/StrawBar";
 import ThemedStatusBar from "../../components/ui/ThemedStatusBar";
 import VideoHeader from "../../components/ui/VideoHeader";
 import { CATEGORIES } from "../../lib/categories";
+import { TIER_LABELS, tierForScore } from "../../lib/riskLevels";
 import { canonicalUrl, parseVideoId } from "../../lib/youtube";
-import { accent } from "../../theme/themes";
 
 // stamp chip text per category key, for the flagged-comment rows.
 const STAMP_BY_KEY = Object.fromEntries(
   CATEGORIES.map((category) => [category.key, category.stamp])
 );
+
+const CONTENT_MAX = 760;
+const GUTTER = 24;
 
 /**
  * Response shape per docs/api-contract.md (`POST /analyze`):
@@ -41,24 +42,12 @@ const STAMP_BY_KEY = Object.fromEntries(
  * @property {{text: string, category: string}[]} sample_flagged_comments each flagged sample plus the backend's computed category
  */
 
-// One neutral, non-lecturing sentence about the gap between instinct and
-// evidence. Ten points either way counts as agreement.
-function reflectionFor(guess, actual) {
-  if (Math.abs(guess - actual) <= 10) {
-    return "Close — your read of this comment section roughly matches the pattern evidence.";
-  }
-  if (guess < actual) {
-    return "The section reads more automated than it looked — engineered comments are written to blend in.";
-  }
-  return "The section reads more human than it looked — an off-feeling comment section isn't always staged.";
-}
-
 export default function AnalysisScreen() {
   const router = useRouter();
   const theme = useTheme();
-  const styles = useMemo(() => makeStyles(theme), [theme]);
+  const { color, font, type, risk } = theme;
   const { videoId } = useLocalSearchParams();
-  const { videoUrl, setVideoUrl, result, reset, guess } = useAnalysis();
+  const { videoUrl, setVideoUrl, result, reset } = useAnalysis();
   const { width } = useWindowDimensions();
   // On a cold deep link this screen mounts before the root navigator is
   // ready; navigating then throws. Wait for the root state key.
@@ -106,11 +95,12 @@ export default function AnalysisScreen() {
     ),
   });
 
-  const twoColumns = width >= 400;
+  const contentWidth = Math.min(width, CONTENT_MAX) - GUTTER * 2;
+  const twoColumns = contentWidth >= 612;
+  const narrow = contentWidth < 480;
 
-  // Agreement threshold matches reflectionFor: within 10 points is "close".
-  const guessPalette =
-    Math.abs(guess - bot_percentage) <= 10 ? theme.risk.low : theme.risk.medium;
+  const tier = tierForScore(bot_percentage);
+  const tierColor = risk[tier].main;
 
   // Honest framing for the evidence list: the API sends a small sample, not
   // every flagged comment — the label must not imply otherwise.
@@ -123,114 +113,154 @@ export default function AnalysisScreen() {
     router.replace("/home");
   };
 
-  // Guess-before-reveal is enforced upstream: /analyzing only navigates here
-  // once BOTH the result and the locked guess exist, and the deep-link
-  // recovery above re-routes through /analyzing (which resets the guess), so
-  // by this point `guess` is always set.
+  const cards = CATEGORIES.map((category) => (
+    <CategoryCard
+      key={category.key}
+      stamp={category.stamp}
+      label={category.label}
+      description={category.description}
+      percent={breakdown[category.key] ?? 0}
+      color={theme.category[category.key]}
+      neutral={Boolean(category.neutral)}
+      style={styles.cell}
+    />
+  ));
+  const cardRows = twoColumns
+    ? [cards.slice(0, 2), cards.slice(2, 4)]
+    : cards.map((card) => [card]);
+
   return (
     <ScrollView style={styles.screen} contentContainerStyle={styles.scroll}>
       <ThemedStatusBar />
+      <View style={styles.topBar}>
+        <Button
+          label="← Home"
+          variant="secondary"
+          size="sm"
+          onPress={() => router.push("/")}
+        />
+      </View>
+
       <View style={styles.content}>
-        <View style={styles.headerRow}>
-          <Text style={theme.type.monoLabel}>ANALYSIS RESULT</Text>
-          <ThemeToggle />
-        </View>
+        <Text style={[type.monoLabel, styles.sectionLabel]}>
+          ANALYSIS RESULT
+        </Text>
         {/* Thumbnail + oEmbed title/channel; falls back to the raw URL. */}
-        <VideoHeader videoId={videoId} style={styles.videoHeader} />
+        <VideoHeader
+          videoId={videoId}
+          style={[styles.videoHeader, { borderBottomColor: color.border }]}
+        />
 
-        <View style={styles.divider} />
-
-        <View style={styles.gaugeBlock}>
-          <ScoreGauge value={bot_percentage} />
-          <Text style={styles.gaugeFootnote}>
-            Based on {total_comments_analyzed.toLocaleString("en-US")} comments
-            analyzed
-          </Text>
+        <View style={styles.scoreRow}>
+          <View>
+            <View style={styles.scoreLine}>
+              <Text
+                style={[
+                  styles.score,
+                  { fontFamily: font.monoBold, color: tierColor },
+                  narrow && styles.scoreNarrow,
+                ]}
+              >
+                {bot_percentage}
+              </Text>
+              <Text
+                style={[
+                  styles.scorePercent,
+                  { fontFamily: font.monoBold, color: tierColor },
+                  narrow && styles.scorePercentNarrow,
+                ]}
+              >
+                %
+              </Text>
+            </View>
+            <Text style={[type.body, styles.scoreCaption]}>
+              likely bot activity
+            </Text>
+          </View>
+          <View style={[styles.tierCol, narrow && styles.tierColNarrow]}>
+            <View
+              style={[styles.tierPill, { backgroundColor: risk[tier].tint }]}
+            >
+              <View style={[styles.tierDot, { backgroundColor: tierColor }]} />
+              <Text
+                style={[
+                  styles.tierText,
+                  { fontFamily: font.sansBold, color: tierColor },
+                ]}
+              >
+                {TIER_LABELS[tier]}
+              </Text>
+            </View>
+            <Text style={type.small}>
+              Based on {total_comments_analyzed.toLocaleString("en-US")}{" "}
+              comments analyzed
+            </Text>
+          </View>
         </View>
 
-        {/* Bridges the gauge to the category cards: the same numbers, as one
-            proportional bar in the cards' colors. */}
-        <CompositionBar breakdown={breakdown} style={styles.composition} />
+        <StrawBar breakdown={breakdown} narrow={narrow} style={styles.straws} />
 
-        <View
-          style={[
-            styles.guessCompare,
-            {
-              // Calibration tint reuses reflectionFor's 10-point agreement
-              // threshold: a close guess reads calm (low), a big miss warms
-              // to amber (medium) — same conditional, styling only.
-              borderLeftColor: guessPalette.main,
-              backgroundColor: guessPalette.tint,
-            },
-          ]}
-        >
-          <Text style={styles.guessCompareLine}>
-            Your guess: {guess}% — Kratt: {bot_percentage}%
-          </Text>
-          <Text style={styles.guessCompareNote}>
-            {reflectionFor(guess, bot_percentage)}
-          </Text>
-        </View>
-
-        <Text style={[theme.type.monoLabel, styles.sectionLabel]}>
+        <Text style={[type.monoLabel, styles.sectionLabel]}>
           EVIDENCE CATEGORIES
         </Text>
         <View style={styles.grid}>
-          {CATEGORIES.map((category, index) => {
-            const percent = breakdown[category.key] ?? 0;
-            return (
-              <CategoryCard
-                key={category.key}
-                categoryKey={category.key}
-                seed={index}
-                stamp={category.stamp}
-                label={category.label}
-                description={category.description}
-                percent={percent}
-                neutral={Boolean(category.neutral)}
-                style={[
-                  styles.cell,
-                  { flexBasis: twoColumns ? "47%" : "100%" },
-                ]}
-              />
-            );
-          })}
+          {cardRows.map((row, index) => (
+            <View key={index} style={styles.gridRow}>
+              {row}
+            </View>
+          ))}
         </View>
 
         {sample_flagged_comments?.length > 0 ? (
           <>
-            <Text style={[theme.type.monoLabel, styles.sectionLabel]}>
+            <Text style={[type.monoLabel, styles.sectionLabel]}>
               SAMPLE OF FLAGGED COMMENTS — {sample_flagged_comments.length} OF ~
               {flaggedTotal.toLocaleString("en-US")} DETECTED
             </Text>
-            <View style={styles.flaggedList}>
+            <View
+              style={[styles.flaggedList, { borderTopColor: color.border }]}
+            >
               {sample_flagged_comments.map((comment, index) => {
                 // The backend ships the category it computed for each flagged
                 // comment (docs/api-contract.md) — render it directly.
                 const reasonKey = comment.category;
+                // No category means a backend on the pre-2026-07-26 contract
+                // (see lib/api.js): drop the stamp rather than render an
+                // empty one.
+                const stamp = reasonKey ? (
+                  <Stamp
+                    label={STAMP_BY_KEY[reasonKey] ?? reasonKey}
+                    color={theme.category[reasonKey] ?? color.inkMuted}
+                  />
+                ) : null;
                 return (
-                  <View key={index} style={styles.flaggedRow}>
-                    <Text style={styles.flaggedIndex}>
+                  <View
+                    key={index}
+                    style={[
+                      styles.flaggedRow,
+                      { borderBottomColor: color.border },
+                    ]}
+                  >
+                    <Text
+                      style={[
+                        styles.flaggedIndex,
+                        { fontFamily: font.monoBold, color: color.accent },
+                      ]}
+                    >
                       #{String(index + 1).padStart(2, "0")}
                     </Text>
-                    <Text style={styles.flaggedText}>“{comment.text}”</Text>
-                    {/* No category means a backend on the pre-2026-07-26
-                        contract (see lib/api.js). Drop the chip rather than
-                        render an empty gradient pill with no label in it. */}
-                    {reasonKey ? (
-                      <View style={styles.flagChip}>
-                        <GradientBlob
-                          colors={
-                            theme.gradients[reasonKey] ?? theme.gradients.brand
-                          }
-                          seed={index}
-                          style={StyleSheet.absoluteFill}
-                        />
-                        <Text style={styles.flagChipText}>
-                          {STAMP_BY_KEY[reasonKey] ?? reasonKey}
-                        </Text>
-                      </View>
-                    ) : null}
+                    <View style={styles.flaggedBody}>
+                      <Text
+                        style={[
+                          styles.flaggedText,
+                          { fontFamily: font.displayMedium, color: color.ink },
+                        ]}
+                      >
+                        “{comment.text}”
+                      </Text>
+                      {narrow ? stamp : null}
+                    </View>
+                    {narrow ? null : stamp}
                   </View>
                 );
               })}
@@ -240,12 +270,12 @@ export default function AnalysisScreen() {
 
         <SourceChecklist style={styles.checklist} />
 
-        <Text style={styles.footnote}>
+        <Text style={[styles.footnote, { fontFamily: font.sans }]}>
           This score is a starting point for critical thinking, not a final
           verdict — read the examples and judge for yourself.
         </Text>
 
-        <PillButton
+        <Button
           label="Analyze another video"
           onPress={handleAnalyzeAnother}
           style={styles.button}
@@ -255,126 +285,143 @@ export default function AnalysisScreen() {
   );
 }
 
-function makeStyles(theme) {
-  const { color, font, radius, type } = theme;
-  return StyleSheet.create({
-    // Transparent: the shared bg + constellation live in app/_layout.jsx.
-    screen: {
-      flex: 1,
-    },
-    scroll: {
-      padding: 24,
-      paddingBottom: 48,
-    },
-    content: {
-      width: "100%",
-      maxWidth: 720,
-      alignSelf: "center",
-    },
-    headerRow: {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
-    },
-    videoHeader: {
-      marginTop: 12,
-    },
-    divider: {
-      height: 1,
-      backgroundColor: color.border,
-      marginTop: 20,
-      marginBottom: 28,
-    },
-    gaugeBlock: {
-      alignItems: "center",
-      marginBottom: 20,
-    },
-    composition: {
-      marginBottom: 24,
-    },
-    // Left-accent + tint are set inline from the guess delta.
-    guessCompare: {
-      borderWidth: 1,
-      borderColor: color.border,
-      borderLeftWidth: 2,
-      borderRadius: radius.md,
-      padding: 16,
-      gap: 6,
-      marginBottom: 36,
-    },
-    guessCompareLine: {
-      fontFamily: font.monoBold,
-      fontSize: 14,
-      lineHeight: 20,
-      color: color.ink,
-    },
-    guessCompareNote: {
-      ...type.small,
-    },
-    gaugeFootnote: {
-      ...type.small,
-      marginTop: 14,
-      textAlign: "center",
-    },
-    sectionLabel: {
-      marginBottom: 12,
-    },
-    grid: {
-      flexDirection: "row",
-      flexWrap: "wrap",
-      gap: 12,
-      marginBottom: 32,
-    },
-    cell: {
-      flexGrow: 1,
-    },
-    flaggedList: {
-      gap: 10,
-      marginBottom: 28,
-    },
-    flaggedRow: {
-      flexDirection: "row",
-      gap: 12,
-      backgroundColor: color.surface,
-      borderWidth: 1,
-      borderColor: color.border,
-      borderLeftWidth: 2,
-      borderLeftColor: accent.violet,
-      borderRadius: radius.sm,
-      padding: 14,
-    },
-    flaggedIndex: {
-      fontFamily: font.monoBold,
-      fontSize: 12,
-      lineHeight: 21,
-      color: accent.violet,
-    },
-    flaggedText: {
-      ...type.body,
-      flex: 1,
-    },
-    flagChip: {
-      alignSelf: "flex-start",
-      overflow: "hidden",
-      borderRadius: radius.sm,
-      paddingHorizontal: 8,
-      paddingVertical: 4,
-    },
-    flagChipText: {
-      fontFamily: font.monoBold,
-      fontSize: 10,
-      letterSpacing: 1,
-      color: "#FFFFFF",
-    },
-    checklist: {
-      marginBottom: 28,
-    },
-    footnote: {
-      ...type.small,
-      marginBottom: 24,
-    },
-    button: {
-      alignSelf: "flex-start",
-    },
-  });
-}
+const styles = StyleSheet.create({
+  screen: {
+    flex: 1,
+  },
+  scroll: {
+    paddingBottom: 72,
+  },
+  topBar: {
+    width: "100%",
+    maxWidth: 1200,
+    alignSelf: "center",
+    height: 72,
+    paddingHorizontal: GUTTER,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  content: {
+    width: "100%",
+    maxWidth: CONTENT_MAX,
+    alignSelf: "center",
+    paddingHorizontal: GUTTER,
+    paddingTop: 8,
+  },
+  sectionLabel: {
+    marginBottom: 14,
+  },
+  videoHeader: {
+    paddingBottom: 26,
+    borderBottomWidth: 1,
+    marginBottom: 34,
+  },
+  scoreRow: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    alignItems: "flex-end",
+    justifyContent: "space-between",
+    gap: 24,
+    marginBottom: 22,
+  },
+  scoreLine: {
+    flexDirection: "row",
+    alignItems: "flex-end",
+    gap: 4,
+  },
+  score: {
+    fontSize: 112,
+    lineHeight: 100,
+    letterSpacing: -5.6,
+  },
+  scoreNarrow: {
+    fontSize: 88,
+    lineHeight: 80,
+    letterSpacing: -4.4,
+  },
+  scorePercent: {
+    fontSize: 42,
+    lineHeight: 46,
+  },
+  scorePercentNarrow: {
+    fontSize: 34,
+    lineHeight: 38,
+  },
+  scoreCaption: {
+    fontSize: 16,
+    marginTop: 10,
+  },
+  tierCol: {
+    alignItems: "flex-end",
+    gap: 10,
+  },
+  tierColNarrow: {
+    alignItems: "flex-start",
+  },
+  tierPill: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    height: 30,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+  },
+  tierDot: {
+    width: 7,
+    height: 7,
+    borderRadius: 4,
+  },
+  tierText: {
+    fontSize: 13.5,
+  },
+  straws: {
+    marginBottom: 34,
+  },
+  grid: {
+    gap: 12,
+    marginBottom: 44,
+  },
+  gridRow: {
+    flexDirection: "row",
+    gap: 12,
+  },
+  cell: {
+    flex: 1,
+  },
+  flaggedList: {
+    borderTopWidth: 1,
+    marginBottom: 44,
+  },
+  flaggedRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 14,
+    paddingVertical: 18,
+    borderBottomWidth: 1,
+  },
+  flaggedIndex: {
+    width: 36,
+    fontSize: 12,
+  },
+  flaggedBody: {
+    flex: 1,
+    gap: 10,
+  },
+  flaggedText: {
+    fontSize: 19,
+    lineHeight: 26,
+    letterSpacing: -0.2,
+  },
+  checklist: {
+    marginBottom: 28,
+  },
+  footnote: {
+    fontSize: 14,
+    lineHeight: 22,
+    color: "rgba(241,234,219,0.55)",
+    marginBottom: 26,
+  },
+  button: {
+    alignSelf: "flex-start",
+  },
+});

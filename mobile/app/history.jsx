@@ -4,9 +4,8 @@ import { useCallback, useMemo, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useFocusEffect, useRouter } from "expo-router";
 import { useTheme } from "../context/ThemeContext";
-import ThemeToggle from "../components/ui/ThemeToggle";
 import ThemedStatusBar from "../components/ui/ThemedStatusBar";
-import PillButton from "../components/ui/PillButton";
+import Button from "../components/ui/Button";
 import { computeStreak, getHistory } from "../lib/history";
 import { tierForScore } from "../lib/riskLevels";
 import { parseVideoId } from "../lib/youtube";
@@ -46,7 +45,6 @@ export default function HistoryScreen() {
       <View style={styles.content}>
         <View style={styles.headerRow}>
           <Text style={theme.type.monoLabel}>VERIFICATION HISTORY</Text>
-          <ThemeToggle />
         </View>
 
         <Text style={styles.streakLine}>
@@ -107,9 +105,10 @@ export default function HistoryScreen() {
           </View>
         )}
 
-        <PillButton
+        <Button
           label="Back to analyzer"
           variant="secondary"
+          size="md"
           onPress={() => router.push("/home")}
           style={styles.button}
         />
@@ -121,7 +120,7 @@ export default function HistoryScreen() {
 function makeStyles(theme) {
   const { color, font, radius, type } = theme;
   return StyleSheet.create({
-    // Transparent: the shared bg + constellation live in app/_layout.jsx.
+    // Transparent: the shared bg lives in app/_layout.jsx.
     screen: {
       flex: 1,
     },
@@ -165,8 +164,8 @@ function makeStyles(theme) {
       backgroundColor: color.surface,
       borderWidth: 1,
       borderColor: color.border,
-      borderRadius: radius.sm,
-      padding: 14,
+      borderRadius: radius.md,
+      padding: 16,
     },
     rowPressed: {
       opacity: 0.7,
@@ -184,7 +183,7 @@ function makeStyles(theme) {
       ...type.small,
     },
     scoreChip: {
-      borderRadius: radius.pill,
+      borderRadius: 8,
       paddingVertical: 4,
       paddingHorizontal: 12,
     },

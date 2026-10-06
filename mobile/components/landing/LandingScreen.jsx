@@ -1,59 +1,61 @@
 import { useRef } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
-import { useRouter } from "expo-router";
 import ThemedStatusBar from "../ui/ThemedStatusBar";
-import LandingNav from "./LandingNav";
+import LandingNav, { NAV_HEIGHT } from "./LandingNav";
 import HeroSection from "./HeroSection";
+import LegendSection from "./LegendSection";
 import WhySection from "./WhySection";
 import ResearchSection from "./ResearchSection";
 import HowSection from "./HowSection";
 import GapSection from "./GapSection";
-import ClosingSection from "./ClosingSection";
+import { AboutStatement, LandingFooter, TryPanel } from "./ClosingSection";
 
-// Room the sticky nav (64) plus breathing space takes above an anchored section.
-const ANCHOR_OFFSET = 80;
+// Extra room above the analyzer panel, so its gold edge isn't flush against
+// the sticky nav.
+const TRY_EXTRA_OFFSET = 16;
 
 export default function LandingScreen() {
-  const router = useRouter();
   const scrollRef = useRef(null);
   const sectionOffsets = useRef({});
 
-  const goToAnalyzer = () => router.push("/home");
-
+  // Each anchor is a direct child of the scroll content, so its layout y is
+  // already its offset within the page.
   const registerSection = (key) => (event) => {
     sectionOffsets.current[key] = event.nativeEvent.layout.y;
   };
 
   const scrollToSection = (key) => {
-    const y = sectionOffsets.current[key];
-    if (y != null && scrollRef.current) {
-      scrollRef.current.scrollTo({
-        y: Math.max(y - ANCHOR_OFFSET, 0),
-        animated: true,
-      });
+    if (!scrollRef.current) return;
+    if (key === "top") {
+      scrollRef.current.scrollTo({ y: 0, animated: true });
+      return;
     }
+    const y = sectionOffsets.current[key];
+    if (y == null) return;
+    // The sticky nav overlays the top of the viewport; land just below it.
+    const offset = NAV_HEIGHT + (key === "try" ? TRY_EXTRA_OFFSET : 0);
+    scrollRef.current.scrollTo({ y: Math.max(y - offset, 0), animated: true });
   };
 
   return (
-    // Background color + constellation come from app/_layout.jsx — this root
-    // stays transparent so the shared particle field shows through.
     <View style={styles.root}>
       <ThemedStatusBar />
       <ScrollView
         ref={scrollRef}
         stickyHeaderIndices={[0]}
-        contentContainerStyle={styles.content}
+        keyboardShouldPersistTaps="handled"
       >
-        <LandingNav onNavigate={scrollToSection} onTry={goToAnalyzer} />
+        <LandingNav onNavigate={scrollToSection} />
 
         <HeroSection
-          onAnalyze={goToAnalyzer}
+          onAnalyze={() => scrollToSection("try")}
           onSeeHow={() => scrollToSection("how")}
         />
 
-        <View onLayout={registerSection("why")}>
-          <WhySection />
+        <View onLayout={registerSection("legend")}>
+          <LegendSection />
         </View>
+        <WhySection />
         <View onLayout={registerSection("research")}>
           <ResearchSection />
         </View>
@@ -64,8 +66,12 @@ export default function LandingScreen() {
           <GapSection />
         </View>
         <View onLayout={registerSection("about")}>
-          <ClosingSection onTry={goToAnalyzer} />
+          <AboutStatement />
         </View>
+        <View onLayout={registerSection("try")}>
+          <TryPanel />
+        </View>
+        <LandingFooter />
       </ScrollView>
     </View>
   );
@@ -74,8 +80,5 @@ export default function LandingScreen() {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-  },
-  content: {
-    paddingBottom: 24,
   },
 });

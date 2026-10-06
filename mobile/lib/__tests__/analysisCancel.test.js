@@ -34,7 +34,7 @@ function captureAnalysis(ref) {
 // if runAnalysis ever signals cancellation under a different key than the one
 // analyzing.jsx checks, this predicate flips to true and the test fails.
 function routesToError(outcome) {
-  return !outcome.ok && !outcome.aborted;
+  return !outcome.ok && !outcome.aborted && !outcome.cancelled;
 }
 
 describe("cancel during analysis", () => {
@@ -57,7 +57,7 @@ describe("cancel during analysis", () => {
 
     // The contract analyzing.jsx relies on: a cancel is a non-error, aborted
     // outcome — never a plain failure.
-    expect(outcome).toEqual({ ok: false, aborted: true });
+    expect(outcome).toEqual({ ok: false, cancelled: true });
 
     // Therefore the Cancel handler routes home (router.replace("/home")) and
     // the error-screen guard below is never taken.

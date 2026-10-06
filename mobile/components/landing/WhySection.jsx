@@ -1,119 +1,116 @@
-import { useMemo } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
-import { useRouter } from "expo-router";
+import { StyleSheet, Text, View } from "react-native";
 import { useTheme } from "../../context/ThemeContext";
-import SectionShell from "./SectionShell";
-import GradientBlob from "../ui/GradientBlob";
+import SectionShell, {
+  Eyebrow,
+  SectionTitle,
+  useLandingLayout,
+} from "./SectionShell";
 
 const ITEMS = [
   {
     title: "Hard to spot by eye",
     body: "Bot-written comments increasingly mimic the way ordinary people write.",
-    gradientKey: "copy_paste",
   },
   {
     title: "They shape public opinion",
     body: "Top comments are often read as the voice of the majority.",
-    gradientKey: "low_effort",
   },
   {
     title: "A skill you can train",
     body: "Recognizing suspicious patterns is part of media literacy.",
-    gradientKey: "genuine",
   },
 ];
 
 export default function WhySection() {
-  const router = useRouter();
-  const theme = useTheme();
-  const styles = useMemo(() => makeStyles(theme), [theme]);
+  const { color, font } = useTheme();
+  const { isWide } = useLandingLayout();
 
   return (
-    <SectionShell style={styles.section}>
-      <Text style={theme.type.monoLabel}>WHY IT MATTERS</Text>
-      <Text style={[theme.type.h2, styles.heading]}>Why this matters</Text>
+    <SectionShell>
+      <Eyebrow>WHY IT MATTERS</Eyebrow>
+      <SectionTitle style={styles.title}>Why this matters</SectionTitle>
 
-      <View style={styles.list}>
+      {/* 1px gaps over the border color draw the dividers between cells. */}
+      <View
+        style={[
+          styles.grid,
+          isWide && styles.gridWide,
+          { backgroundColor: color.border, borderColor: color.border },
+        ]}
+      >
         {ITEMS.map((item, index) => (
-          <View key={item.title} style={styles.row}>
-            <GradientBlob
-              colors={theme.gradients[item.gradientKey]}
-              seed={index}
-              radius={theme.radius.sm}
-              style={styles.icon}
-            />
-            <View style={styles.rowText}>
-              <Text style={styles.rowTitle}>{item.title}</Text>
-              <Text style={styles.rowBody}>{item.body}</Text>
-            </View>
-            <Text style={styles.plus}>+</Text>
+          <View
+            key={item.title}
+            style={[
+              styles.cell,
+              isWide && styles.cellWide,
+              { backgroundColor: color.bg },
+            ]}
+          >
+            <Text
+              style={[
+                styles.number,
+                { fontFamily: font.monoBold, color: color.accent },
+              ]}
+            >
+              {String(index + 1).padStart(2, "0")}
+            </Text>
+            <Text
+              style={[
+                styles.cellTitle,
+                { fontFamily: font.displayBold, color: color.ink },
+              ]}
+            >
+              {item.title}
+            </Text>
+            <Text
+              style={[
+                styles.cellBody,
+                { fontFamily: font.sans, color: color.inkMuted },
+              ]}
+            >
+              {item.body}
+            </Text>
           </View>
         ))}
       </View>
-
-      <Pressable
-        accessibilityRole="button"
-        accessibilityLabel="Read the manufactured consensus explainer"
-        onPress={() => router.push("/onboarding")}
-        hitSlop={8}
-        style={styles.explainerLink}
-      >
-        <Text style={styles.explainerText}>
-          New to this? Read the two-minute explainer →
-        </Text>
-      </Pressable>
     </SectionShell>
   );
 }
 
-function makeStyles(theme) {
-  const { color, type } = theme;
-  return StyleSheet.create({
-    section: {
-      paddingVertical: 56,
-    },
-    heading: {
-      marginTop: 8,
-      marginBottom: 28,
-    },
-    list: {
-      borderTopWidth: 1,
-      borderTopColor: color.border,
-    },
-    row: {
-      flexDirection: "row",
-      alignItems: "center",
-      gap: 16,
-      paddingVertical: 20,
-      borderBottomWidth: 1,
-      borderBottomColor: color.border,
-    },
-    icon: {
-      width: 40,
-      height: 40,
-    },
-    rowText: {
-      flex: 1,
-      gap: 4,
-    },
-    rowTitle: {
-      ...type.h3,
-    },
-    rowBody: {
-      ...type.body,
-    },
-    plus: {
-      fontFamily: type.h3.fontFamily,
-      fontSize: 22,
-      color: color.inkFaint,
-    },
-    explainerLink: {
-      marginTop: 20,
-      alignSelf: "flex-start",
-    },
-    explainerText: {
-      ...type.body,
-      color: color.ink,
-    },
-  });
-}
+const styles = StyleSheet.create({
+  title: {
+    marginBottom: 48,
+  },
+  grid: {
+    gap: 1,
+    borderWidth: 1,
+    borderRadius: 14,
+    overflow: "hidden",
+  },
+  gridWide: {
+    flexDirection: "row",
+  },
+  cell: {
+    paddingTop: 32,
+    paddingHorizontal: 30,
+    paddingBottom: 36,
+  },
+  cellWide: {
+    flex: 1,
+  },
+  number: {
+    fontSize: 13,
+    marginBottom: 48,
+  },
+  cellTitle: {
+    fontSize: 26,
+    lineHeight: 29,
+    letterSpacing: -0.65,
+    marginBottom: 12,
+  },
+  cellBody: {
+    fontSize: 16,
+    lineHeight: 25,
+  },
+});

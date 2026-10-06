@@ -4,7 +4,6 @@
 import { useMemo, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { useTheme } from "../../context/ThemeContext";
-import { accent } from "../../theme/themes";
 
 const ITEMS = [
   {
@@ -37,11 +36,14 @@ export default function SourceChecklist({ style }) {
   const toggle = (key) =>
     setChecked((current) => ({ ...current, [key]: !current[key] }));
 
+  const checkedCount = ITEMS.filter((item) => checked[item.key]).length;
+
   return (
     <View style={style}>
-      <Text style={[theme.type.monoLabel, styles.sectionLabel]}>
-        BEFORE YOU TRUST THIS VIDEO
-      </Text>
+      <View style={styles.headRow}>
+        <Text style={theme.type.monoLabel}>BEFORE YOU TRUST THIS VIDEO</Text>
+        <Text style={styles.count}>{checkedCount}/4</Text>
+      </View>
       <View style={styles.list}>
         {ITEMS.map((item, index) => {
           const isChecked = Boolean(checked[item.key]);
@@ -53,7 +55,11 @@ export default function SourceChecklist({ style }) {
               aria-checked={isChecked}
               accessibilityLabel={item.label}
               onPress={() => toggle(item.key)}
-              style={[styles.row, index === ITEMS.length - 1 && styles.rowLast]}
+              style={({ hovered }) => [
+                styles.row,
+                hovered && styles.rowHovered,
+                index === ITEMS.length - 1 && styles.rowLast,
+              ]}
             >
               <View style={[styles.box, isChecked && styles.boxChecked]}>
                 {isChecked ? <Text style={styles.check}>✓</Text> : null}
@@ -73,66 +79,80 @@ export default function SourceChecklist({ style }) {
 }
 
 function makeStyles(theme) {
-  const { color, font, radius, type } = theme;
+  const { color, font, radius } = theme;
   return StyleSheet.create({
-    sectionLabel: {
-      marginBottom: 12,
+    headRow: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "baseline",
+      gap: 12,
+      marginBottom: 14,
     },
-    // Pink left accent: this card is the user's own manual actions, distinct
-    // from algorithmic evidence (violet) and guess calibration (teal/amber).
+    count: {
+      fontFamily: font.mono,
+      fontSize: 12,
+      color: color.inkFaint,
+    },
     list: {
       backgroundColor: color.surface,
       borderWidth: 1,
       borderColor: color.border,
-      borderLeftWidth: 2,
-      borderLeftColor: accent.pink,
-      borderRadius: radius.md,
+      borderRadius: radius.lg,
+      overflow: "hidden",
     },
     row: {
       flexDirection: "row",
       alignItems: "flex-start",
-      gap: 12,
-      padding: 14,
+      gap: 14,
+      paddingVertical: 16,
+      paddingHorizontal: 18,
       borderBottomWidth: 1,
-      borderBottomColor: color.border,
+      borderBottomColor: "rgba(241,234,219,0.08)",
+    },
+    rowHovered: {
+      backgroundColor: "rgba(241,234,219,0.03)",
     },
     rowLast: {
       borderBottomWidth: 0,
     },
     box: {
-      width: 20,
-      height: 20,
-      marginTop: 2,
-      borderRadius: radius.sm / 2,
+      width: 22,
+      height: 22,
+      marginTop: 1,
+      borderRadius: 6,
       borderWidth: 1.5,
-      borderColor: color.borderStrong,
+      borderColor: "rgba(241,234,219,0.28)",
       alignItems: "center",
       justifyContent: "center",
     },
     boxChecked: {
-      backgroundColor: color.ink,
-      borderColor: color.ink,
+      backgroundColor: color.accent,
+      borderColor: color.accent,
     },
     check: {
-      color: color.onLight,
-      fontSize: 13,
-      lineHeight: 15,
+      color: color.onAccent,
+      fontSize: 14,
+      lineHeight: 16,
       fontFamily: font.sansBold,
     },
     rowText: {
       flex: 1,
-      gap: 2,
+      gap: 3,
     },
     label: {
-      ...type.body,
-      color: color.ink,
       fontFamily: font.sansBold,
+      fontSize: 15.5,
+      lineHeight: 21,
+      color: color.ink,
     },
     labelChecked: {
-      color: color.inkMuted,
+      color: "rgba(241,234,219,0.55)",
     },
     detail: {
-      ...type.small,
+      fontFamily: font.sans,
+      fontSize: 13.5,
+      lineHeight: 19.5,
+      color: "rgba(241,234,219,0.55)",
     },
   });
 }

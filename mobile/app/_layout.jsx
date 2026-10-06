@@ -1,56 +1,41 @@
-import { useMemo } from "react";
 import { View } from "react-native";
-import { Stack, usePathname } from "expo-router";
+import { Stack } from "expo-router";
 import Head from "expo-router/head";
 import {
   ThemeProvider as NavigationThemeProvider,
   DarkTheme as NavDarkTheme,
-  DefaultTheme as NavDefaultTheme,
 } from "@react-navigation/native";
 import {
   useFonts,
-  ZillaSlab_500Medium,
-  ZillaSlab_600SemiBold,
-} from "@expo-google-fonts/zilla-slab";
+  BricolageGrotesque_500Medium,
+  BricolageGrotesque_700Bold,
+  BricolageGrotesque_800ExtraBold,
+} from "@expo-google-fonts/bricolage-grotesque";
 import {
-  Archivo_400Regular,
-  Archivo_600SemiBold,
-} from "@expo-google-fonts/archivo";
+  SchibstedGrotesk_400Regular,
+  SchibstedGrotesk_600SemiBold,
+} from "@expo-google-fonts/schibsted-grotesk";
 import {
   SpaceMono_400Regular,
   SpaceMono_700Bold,
 } from "@expo-google-fonts/space-mono";
 import { AnalysisProvider } from "../context/AnalysisContext";
-import {
-  ThemeProvider,
-  useTheme,
-  useThemeMode,
-} from "../context/ThemeContext";
-import ConstellationBackground from "../components/ui/ConstellationBackground";
+import { ThemeProvider, useTheme } from "../context/ThemeContext";
+
+// The navigator paints colors.background (React Navigation's theme) over
+// everything behind it; transparent lets the root View's bg show through.
+const navTheme = {
+  ...NavDarkTheme,
+  colors: { ...NavDarkTheme.colors, background: "transparent" },
+};
 
 function RootNavigator() {
   const { color } = useTheme();
-  const { mode } = useThemeMode();
-  const pathname = usePathname();
-
-  // contentStyle below only clears each screen's content view — the navigator
-  // itself paints colors.background from the React Navigation theme (light
-  // grey #F2F2F2 by default) over everything behind it. Left unset, that
-  // covered the root View's dark bg and the constellation, making dark mode
-  // render white-on-white.
-  const navTheme = useMemo(() => {
-    const base = mode === "dark" ? NavDarkTheme : NavDefaultTheme;
-    return { ...base, colors: { ...base.colors, background: "transparent" } };
-  }, [mode]);
 
   return (
-    // The root View owns the background color and the constellation is
-    // mounted once here, behind the Stack — so every screen shares the same
-    // ambient field instead of only the landing page having one. Screens must
-    // therefore keep their containers transparent: contentStyle stays
-    // transparent too, or the navigator would paint over the particles.
+    // The root View owns the background color, so every screen keeps its
+    // containers transparent (contentStyle included).
     <View style={{ flex: 1, backgroundColor: color.bg }}>
-      <ConstellationBackground density={pathname === "/" ? 1 : 0.45} />
       <NavigationThemeProvider value={navTheme}>
         <Stack
           screenOptions={{
@@ -65,10 +50,11 @@ function RootNavigator() {
 
 export default function RootLayout() {
   const [fontsLoaded, fontError] = useFonts({
-    ZillaSlab_500Medium,
-    ZillaSlab_600SemiBold,
-    Archivo_400Regular,
-    Archivo_600SemiBold,
+    BricolageGrotesque_500Medium,
+    BricolageGrotesque_700Bold,
+    BricolageGrotesque_800ExtraBold,
+    SchibstedGrotesk_400Regular,
+    SchibstedGrotesk_600SemiBold,
     SpaceMono_400Regular,
     SpaceMono_700Bold,
   });

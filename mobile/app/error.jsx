@@ -3,8 +3,7 @@ import { StyleSheet, Text, View } from "react-native";
 import { useRouter } from "expo-router";
 import { useAnalysis } from "../context/AnalysisContext";
 import { useTheme } from "../context/ThemeContext";
-import PillButton from "../components/ui/PillButton";
-import ThemeToggle from "../components/ui/ThemeToggle";
+import Button from "../components/ui/Button";
 import ThemedStatusBar from "../components/ui/ThemedStatusBar";
 
 const ERROR_TITLES = {
@@ -33,14 +32,13 @@ export default function ErrorScreen() {
   return (
     <View style={styles.container}>
       <ThemedStatusBar />
-      <ThemeToggle style={styles.toggle} />
       <View style={styles.stamp}>
         <Text style={styles.stampText}>ERROR</Text>
       </View>
       <Text style={styles.title}>{title}</Text>
       <Text style={styles.message}>{message}</Text>
 
-      <PillButton
+      <Button
         label="Try again"
         onPress={() => {
           reset();
@@ -55,18 +53,13 @@ export default function ErrorScreen() {
 function makeStyles(theme) {
   const { font, radius, risk, type } = theme;
   return StyleSheet.create({
-    // Transparent: the shared bg + constellation live in app/_layout.jsx.
+    // Transparent: the shared bg lives in app/_layout.jsx.
     container: {
       flex: 1,
       alignItems: "center",
       justifyContent: "center",
       paddingHorizontal: 32,
       gap: 8,
-    },
-    toggle: {
-      position: "absolute",
-      top: 20,
-      right: 20,
     },
     stamp: {
       backgroundColor: risk.high.tint,

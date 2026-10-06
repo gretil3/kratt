@@ -18,24 +18,24 @@ npx expo start --web    # web — landing page + app at http://localhost:8081
 ## Structure
 
 - `app/` — screens (Expo Router file-based routing)
-  - `index.jsx` — web: landing page; native: splash → `/home`
-  - `onboarding.jsx` — first-run "manufactured consensus" explainer (4 cards); gated by an `AsyncStorage` flag and re-openable from `/home` and the landing page
-  - `home.jsx` — paste-link screen; also shows the verification streak and links to the explainer and history
-  - `analyzing.jsx` — progress screen; runs the analysis and routes to the result
-  - `analysis/[videoId].jsx` — result screen. First asks the user to guess the bot % (guess-before-reveal), then shows the score gauge, guess-vs-Kratt comparison, evidence-category grid, flagged comments, and the source-evaluation checklist. Results live only in memory (the API is POST-only), so on a deep link or web refresh this screen re-runs the analysis for its id.
+  - `index.jsx` — the landing page (its "Try it now" panel embeds the paste form)
+  - `home.jsx` — paste-link screen; links to history
+  - `analyzing.jsx` — progress screen (bucket head with scanning eyes); runs the analysis and routes to the result
+  - `analysis/[videoId].jsx` — result screen: the score with its tier, the 100-straw breakdown bar, evidence-category cards, flagged comments, and the source-evaluation checklist. Results live only in memory (the API is POST-only), so on a deep link or web refresh this screen re-runs the analysis for its id.
   - `history.jsx` — client-side verification history + day streak
   - `error.jsx` — error states from the contract
   - `+html.jsx` — custom web HTML shell carrying share/OG metadata (web only)
-- `components/ui/` — reusable pieces: `PillButton`, `GradientBlob`, `ScoreGauge`, `CategoryCard`, `GuessPanel`, `SourceChecklist`, `ThemeToggle`, `ThemedStatusBar`
-- `components/landing/` — landing page sections (hero, why-it-matters, evidence categories, how-it-works, why-Kratt + sources, closing)
-- `theme/themes.js` — the design system (dark/light palettes, type, risk colors, gradients). **Single source of truth** — read it via `useTheme()` instead of hardcoding colors/fonts in screens. `theme/tokens.js` only holds the font-family names it consumes.
+- `components/ui/` — reusable pieces: `Button`, `PasteForm` (shared by `/home` and the landing panel), `Stamp` (category tag), `StrawBar`, `CategoryCard`, `VideoHeader`, `SourceChecklist`, `ThemedStatusBar`
+- `components/kratt/` — the Kratt illustrations: `KrattFigure` (hero), `BucketHead` (scalable logo/mascot), `KrattEyes` (blink/scan animation), `Stripes` (straw and twine textures as SVG patterns, so they render on native too)
+- `components/landing/` — landing page sections (hero, who-is-Kratt, why-it-matters, evidence categories, how-it-works, why-Kratt + sources, about + try-it panel + footer)
+- `theme/themes.js` — the design system (palette, category colors, type, risk colors, material swatches). **Single source of truth** — read it via `useTheme()` instead of hardcoding colors/fonts in screens. `theme/tokens.js` only holds the font-family names it consumes; `theme/webStyle.js` gates web-only CSS (box shadows, backdrop blur).
 - `lib/` — `mockApi.js` (implements the contract until the backend is live), `categories.js` (breakdown keys → display copy), `riskLevels.js` (tier/level thresholds), `youtube.js` (video-id parsing), `storage.js` (safe `AsyncStorage` JSON wrapper + keys), `history.js` (history entries + streak logic)
-- `context/AnalysisContext.jsx` — in-memory analysis state (video URL, result, and the user's pre-reveal guess)
-- `context/ThemeContext.jsx` — dark/light mode state; exposes `useTheme()` / `useThemeMode()`
+- `context/AnalysisContext.jsx` — in-memory analysis state (video URL, result)
+- `context/ThemeContext.jsx` — provides the theme via `useTheme()` and opts the web page out of browser "force dark" repainting
 
 ## Design system
 
-Everything visual lives in `theme/themes.js` and reaches components through `useTheme()` from `context/ThemeContext.jsx`. It defines a dark theme (default) and a light theme sharing one shape: surface/ink color scales, type styles (Zilla Slab headlines, Archivo body, Space Mono labels/scores), radii, the brand gradient (violet → teal → pink) plus one gradient trio per evidence category, and per-theme risk colors (low = teal, medium = amber, high = red, each with a matching tint). The low/medium/high framing on cards and the gauge tier are **UI heuristics** derived in `lib/riskLevels.js` — the API contract only returns percentages, so retune thresholds there.
+Everything visual lives in `theme/themes.js` and reaches components through `useTheme()` from `context/ThemeContext.jsx`. It's a single warm, dark "straw and tin" theme: surface/ink color scales, straw-gold accent and ember highlight, type styles (Bricolage Grotesque headlines, Schibsted Grotesk body, Space Mono labels/scores), one color per evidence category (spam = ember, copy-paste = blue, low effort = pink, genuine = green), risk colors (low = green, medium = gold, high = ember, each with a matching tint), and the straw/twine/tin swatches the illustrations are drawn from. The low/medium/high framing on cards and the gauge tier are **UI heuristics** derived in `lib/riskLevels.js` — the API contract only returns percentages, so retune thresholds there.
 
 The reasoning behind the revamp (token system, contract-first categories, the `/analysis/[videoId]` route and its deep-link recovery, English copy) is written up in [`../docs/decisions/002-mobile-design-revamp.md`](../docs/decisions/002-mobile-design-revamp.md).
 
@@ -43,10 +43,8 @@ The reasoning behind the revamp (token system, contract-first categories, the `/
 
 Kratt isn't just a bot-score readout — it's built to teach the reader to spot manufactured consensus. These behaviours are layered on top of the analysis flow and are all **client-side**; none of them need a backend endpoint.
 
-- **Onboarding explainer** (`app/onboarding.jsx`) — a 4-card intro (astroturfing → why social proof works → the scale of the problem → Kratt's role as a literacy trainer, not a judge). Shown once on first visit to `/home` and then re-openable any time. "Seen" state is persisted with `AsyncStorage` via `lib/storage.js`.
-- **Guess before reveal** (`components/ui/GuessPanel.jsx`) — after analysis finishes, the result stays hidden until the user commits their own estimate of the bot %. The result screen then shows "Your guess: X% — Kratt: Y%" plus a neutral reflection. The guess lives in `AnalysisContext` and resets on every run, so deep-link/refresh re-runs always pass through it.
 - **Source-evaluation checklist** (`components/ui/SourceChecklist.jsx`) — four actionable checks ("before you trust this video") with local-only interactive checkboxes, rendered after the flagged-comment examples.
-- **Verification history + streak** (`app/history.jsx`, `lib/history.js`) — every completed analysis is saved locally (URL, timestamp, bot %). The history screen lists them newest-first with a risk-tinted score chip; `/home` shows the current consecutive-day streak. A short dedupe window keeps deep-link recovery re-runs from double-logging.
+- **Verification history + streak** (`app/history.jsx`, `lib/history.js`) — every completed analysis is saved locally (URL, timestamp, bot %). The history screen lists them newest-first with a risk-tinted score chip, under the current consecutive-day streak. A short dedupe window keeps deep-link recovery re-runs from double-logging.
 - **"Why Kratt" + sources** (`components/landing/GapSection.jsx`) — landing section contrasting score-only detectors with Kratt's show-the-evidence approach, plus a short paraphrased reading list (links only).
 
 ## Web deployment

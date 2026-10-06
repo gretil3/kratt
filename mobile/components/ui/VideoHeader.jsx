@@ -64,28 +64,35 @@ export default function VideoHeader({ videoId, style }) {
 }
 
 function makeStyles(theme) {
-  const { color, font, radius, type } = theme;
+  const { color, font } = theme;
   return StyleSheet.create({
     row: {
       flexDirection: "row",
       alignItems: "center",
-      gap: 14,
+      gap: 16,
     },
     thumbnail: {
-      width: 112,
-      height: 63, // 16:9
-      borderRadius: radius.sm,
-      backgroundColor: color.surfaceAlt,
+      width: 124,
+      height: 70, // 16:9
+      borderRadius: 8,
+      backgroundColor: color.well,
     },
     textCol: {
       flex: 1,
-      gap: 3,
+      gap: 4,
     },
     title: {
-      ...type.h3,
+      fontFamily: font.displayBold,
+      fontSize: 20,
+      lineHeight: 24,
+      letterSpacing: -0.4,
+      color: color.ink,
     },
     channel: {
-      ...type.small,
+      fontFamily: font.sans,
+      fontSize: 14,
+      lineHeight: 19,
+      color: "rgba(241,234,219,0.62)",
     },
     url: {
       fontFamily: font.mono,

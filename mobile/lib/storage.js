@@ -5,7 +5,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const STORAGE_KEYS = {
-  onboardingSeen: "kratt.onboardingSeen",
   history: "kratt.history",
 };
 

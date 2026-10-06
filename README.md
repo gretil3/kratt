@@ -4,7 +4,7 @@
 
 Kratt is a media literacy tool built for **UNESCO Youth Hackathon 2026** (theme: *Play Your Part — Youth Designing the Future of Media and Information Literacy*). Paste a YouTube video link, and Kratt returns an estimate of how much of the comment section is likely bot activity — broken down into four categories (ads & spam, copy-paste, low-effort filler, genuine) so the score comes with a reason, not just a number.
 
-The point isn't the number. Kratt is built to *train the reader*: it makes you guess before it reveals, shows you the actual comments it flagged, and hands you a checklist for evaluating the source yourself.
+The point isn't the number. Kratt is built to *train the reader*: it shows you the actual comments it flagged and hands you a checklist for evaluating the source yourself.
 
 ## Team
 
@@ -27,10 +27,10 @@ kratt/
 │   ├── requirements.txt / requirements-serve.txt
 │   └── README.md
 ├── mobile/                # React Native (Expo) — app + web landing page
-│   ├── app/               # screens (expo-router): index/landing, onboarding, home,
+│   ├── app/               # screens (expo-router): index/landing, home,
 │   │                      #   analyzing, analysis/[videoId], history, error, +html
-│   ├── components/        # landing/ sections + ui/ shared pieces (gauge, cards, guess panel)
-│   ├── context/           # AnalysisContext (run/cancel/guess), ThemeContext (dark/light)
+│   ├── components/        # landing/ sections, kratt/ illustrations, ui/ shared pieces
+│   ├── context/           # AnalysisContext (run/cancel), ThemeContext
 │   ├── theme/             # design tokens — single source of truth for color/type
 │   ├── lib/               # api.js (real backend), mockApi.js, categories, riskLevels,
 │   │                      #   youtube, oembed, storage, history  (+ __tests__/)
@@ -132,8 +132,6 @@ Both halves have their own `.env`. Neither is committed — `.env` is gitignored
 
 These are what make Kratt a literacy tool rather than a score readout. All client-side; none need a backend endpoint.
 
-- **Onboarding explainer** — 4-card intro to manufactured consensus, shown once, re-openable any time.
-- **Guess before reveal** — the result stays hidden until you commit your own estimate, then shows "Your guess: X% — Kratt: Y%".
 - **Evidence, not just a number** — the flagged comments the score was built from, each stamped with its category.
 - **Source-evaluation checklist** — four actionable "before you trust this video" checks.
 - **Verification history + day streak** — every analysis saved locally, with a streak on `/home`.

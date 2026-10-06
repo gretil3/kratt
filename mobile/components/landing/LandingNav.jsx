@@ -1,127 +1,124 @@
-import { useMemo } from "react";
-import {
-  Pressable,
-  StyleSheet,
-  Text,
-  useWindowDimensions,
-  View,
-} from "react-native";
+// Sticky top bar: logo, in-page section links (wide screens), and the
+// "Try it now" jump to the embedded analyzer.
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import { useTheme } from "../../context/ThemeContext";
-import GradientBlob from "../ui/GradientBlob";
-import PillButton from "../ui/PillButton";
-import ThemeToggle from "../ui/ThemeToggle";
+import { webStyle } from "../../theme/webStyle";
+import BucketHead from "../kratt/BucketHead";
+import Button from "../ui/Button";
+import { useLandingLayout } from "./SectionShell";
 
-function NavLink({ label, onPress, style }) {
+export const NAV_HEIGHT = 68;
+
+const LINKS = [
+  ["legend", "Who is Kratt"],
+  ["how", "How it works"],
+  ["research", "Evidence categories"],
+  ["gap", "Why Kratt"],
+  ["about", "About"],
+];
+
+export default function LandingNav({ onNavigate }) {
+  const { color, font, layout } = useTheme();
+  const { gutter, showNavLinks } = useLandingLayout();
+
   return (
-    <Pressable
-      accessibilityRole="link"
-      onPress={onPress}
-      style={({ pressed }) => pressed && { opacity: 0.6 }}
+    <View
+      style={[
+        styles.bar,
+        { backgroundColor: color.navBar, borderBottomColor: color.border },
+        webStyle({
+          backdropFilter: "blur(12px)",
+          WebkitBackdropFilter: "blur(12px)",
+        }),
+      ]}
     >
-      <Text style={style}>{label}</Text>
-    </Pressable>
-  );
-}
+      <View
+        style={[
+          styles.inner,
+          { maxWidth: layout.maxWidth, paddingHorizontal: gutter },
+        ]}
+      >
+        <Pressable
+          accessibilityRole="link"
+          accessibilityLabel="Kratt, back to top"
+          onPress={() => onNavigate("top")}
+          style={styles.logoRow}
+        >
+          <BucketHead width={28} animate={false} />
+          <Text
+            style={[
+              styles.logo,
+              { fontFamily: font.display, color: color.ink },
+            ]}
+          >
+            Kratt
+          </Text>
+        </Pressable>
 
-export default function LandingNav({ onNavigate, onTry }) {
-  const theme = useTheme();
-  const styles = useMemo(() => makeStyles(theme), [theme]);
-  const { width } = useWindowDimensions();
-  const isWide = width >= theme.layout.breakpoint;
-
-  return (
-    <View style={styles.bar}>
-      <View style={styles.inner}>
-        <View style={styles.logoRow}>
-          <GradientBlob
-            colors={theme.gradients.brand}
-            radius={theme.radius.sm}
-            style={styles.logoMark}
-          />
-          <Text style={styles.logo}>Kratt</Text>
-        </View>
-
-        {isWide ? (
+        {showNavLinks ? (
           <View style={styles.links}>
-            <NavLink
-              label="How it works"
-              onPress={() => onNavigate("how")}
-              style={styles.link}
-            />
-            <NavLink
-              label="Evidence categories"
-              onPress={() => onNavigate("research")}
-              style={styles.link}
-            />
-            <NavLink
-              label="Why Kratt"
-              onPress={() => onNavigate("gap")}
-              style={styles.link}
-            />
-            <NavLink
-              label="About"
-              onPress={() => onNavigate("about")}
-              style={styles.link}
-            />
+            {LINKS.map(([key, label]) => (
+              <Pressable
+                key={key}
+                accessibilityRole="link"
+                onPress={() => onNavigate(key)}
+              >
+                {({ hovered }) => (
+                  <Text
+                    style={[
+                      styles.link,
+                      {
+                        fontFamily: font.sans,
+                        color: hovered ? color.ink : color.inkMuted,
+                      },
+                    ]}
+                  >
+                    {label}
+                  </Text>
+                )}
+              </Pressable>
+            ))}
           </View>
         ) : null}
 
-        <View style={styles.actions}>
-          <ThemeToggle />
-          <PillButton size="sm" label="Try it now" onPress={onTry} />
-        </View>
+        <Button
+          label="Try it now"
+          size="md"
+          onPress={() => onNavigate("try")}
+        />
       </View>
     </View>
   );
 }
 
-function makeStyles(theme) {
-  const { color, font, layout } = theme;
-  return StyleSheet.create({
-    bar: {
-      backgroundColor: color.navBar,
-      borderBottomWidth: 1,
-      borderBottomColor: color.border,
-      zIndex: 10,
-    },
-    inner: {
-      width: "100%",
-      maxWidth: layout.maxWidth,
-      alignSelf: "center",
-      paddingHorizontal: 24,
-      height: 64,
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
-      gap: 16,
-    },
-    logoRow: {
-      flexDirection: "row",
-      alignItems: "center",
-      gap: 10,
-    },
-    logoMark: {
-      width: 26,
-      height: 26,
-    },
-    logo: {
-      fontFamily: font.display,
-      fontSize: 21,
-      color: color.ink,
-    },
-    links: {
-      flexDirection: "row",
-      gap: 28,
-    },
-    link: {
-      fontFamily: font.sans,
-      fontSize: 14,
-      color: color.inkMuted,
-    },
-    actions: {
-      flexDirection: "row",
-      alignItems: "center",
-      gap: 10,
-    },
-  });
-}
+const styles = StyleSheet.create({
+  bar: {
+    borderBottomWidth: 1,
+  },
+  inner: {
+    width: "100%",
+    alignSelf: "center",
+    height: NAV_HEIGHT,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 24,
+  },
+  logoRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 11,
+  },
+  logo: {
+    fontSize: 23,
+    letterSpacing: -0.7,
+  },
+  links: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 30,
+  },
+  link: {
+    fontSize: 14.5,
+  },
+});

@@ -15,6 +15,9 @@ const DESCRIPTION =
 const SITE_URL = "https://kratt.vercel.app"; // TODO: ganti ke domain final
 const OG_IMAGE = `${SITE_URL}/og-image.png`;
 
+// Keep in sync with theme/themes.js color.bg.
+const BASE_CSS = "html,body{background-color:#0D0C0A;}";
+
 export default function Root({ children }) {
   return (
     <html lang="en">
@@ -44,6 +47,9 @@ export default function Root({ children }) {
         <meta name="twitter:image" content={OG_IMAGE} />
 
         <ScrollViewStyleReset />
+        {/* Paint the theme bg before JS loads, so there's no white flash
+            (and no white overscroll band) on the dark site. */}
+        <style dangerouslySetInnerHTML={{ __html: BASE_CSS }} />
       </head>
       <body>{children}</body>
     </html>

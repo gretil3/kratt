@@ -1,4 +1,10 @@
-import { createContext, useCallback, useContext, useRef, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useRef,
+  useState,
+} from "react";
 import { analyze } from "../lib/api";
 import { appendHistoryEntry } from "../lib/history";
 import { canonicalUrl, parseVideoId } from "../lib/youtube";
@@ -9,9 +15,6 @@ export function AnalysisProvider({ children }) {
   const [videoUrl, setVideoUrl] = useState("");
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
-  // The user's pre-reveal estimate of bot_percentage (0–100). null means "not
-  // guessed yet", which is what gates the reveal behind the guess step.
-  const [guess, setGuess] = useState(null);
   // Controller for the in-flight request, so navigating away (Cancel) can
   // actually stop it instead of letting a stale response navigate later.
   const abortRef = useRef(null);
@@ -30,7 +33,6 @@ export function AnalysisProvider({ children }) {
 
       setError(null);
       setResult(null);
-      setGuess(null);
 
       const response = await analyze(url, controller.signal);
 
@@ -64,7 +66,6 @@ export function AnalysisProvider({ children }) {
     setVideoUrl("");
     setResult(null);
     setError(null);
-    setGuess(null);
   }, [cancelAnalysis]);
 
   const value = {
@@ -72,8 +73,6 @@ export function AnalysisProvider({ children }) {
     setVideoUrl,
     result,
     error,
-    guess,
-    setGuess,
     runAnalysis,
     cancelAnalysis,
     reset,
